@@ -204,6 +204,42 @@ tr:first-child td {
   font-weight: bold;
 }
 
+#knockout table {
+  border: 2px solid #d4af37;
+}
+
+#knockout th {
+  background: #1f3c88;
+}
+
+#knockout td:first-child {
+  font-weight: bold;
+  background: #eef3ff;
+}
+
+/* Quarter Finals */
+#knockout tr:nth-child(2),
+#knockout tr:nth-child(3),
+#knockout tr:nth-child(15),
+#knockout tr:nth-child(16) {
+  border-left: 5px solid #1f3c88;
+}
+
+/* Semi Finals */
+#knockout tr:nth-child(5),
+#knockout tr:nth-child(6),
+#knockout tr:nth-child(18),
+#knockout tr:nth-child(19) {
+  border-left: 5px solid #d4af37;
+}
+
+/* Final */
+#knockout tr:nth-child(8),
+#knockout tr:nth-child(21) {
+  border-left: 5px solid green;
+  font-weight: bold;
+}
+
 </style>
 
 <div class="header">
@@ -279,8 +315,6 @@ if(sheet.includes("Fixtures")){
   maxCols = cols.length;
 }
 
-
-cols.slice(0,maxCols).forEach(c=>{
       html += `<th>${c.label||""}</th>`;
     });
 
