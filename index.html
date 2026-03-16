@@ -13,9 +13,10 @@ html, body {
   padding: 0;
   font-family: Arial, sans-serif;
   background: #f4f6f8;
+  overflow-x: hidden;
 }
 
-/* HEADER (FIXED FULL WIDTH) */
+/* HEADER */
 .header {
   text-align: center;
   padding: 20px;
@@ -23,17 +24,19 @@ html, body {
   color: white;
   width: 100%;
   box-sizing: border-box;
+  display: block;
 }
 
 .header img {
   width: 100px;
 }
 
-/* NAVIGATION (FULL WIDTH GRID) */
+/* NAVIGATION */
 nav {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   width: 100%;
+  background: #2e5cb8;
 }
 
 nav button {
@@ -51,6 +54,7 @@ nav button:hover {
   color: black;
 }
 
+/* PAGES */
 .page {
   display: none;
   padding: 10px;
@@ -97,7 +101,7 @@ tr:hover {
   font-weight: bold;
 }
 
-/* Knockout styling */
+/* Knockout */
 .match {
   background: white;
   border-radius: 8px;
