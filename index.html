@@ -15,13 +15,13 @@ body {
 
 .header {
   text-align: center;
-  padding: 20px;
-  background: #1f3c88;
+  padding: 25px;
+  background: linear-gradient(135deg, #1f3c88, #2e5cb8);
   color: white;
 }
 
 .header img {
-  width: 120px;
+  width: 110px;
 }
 
 nav {
@@ -32,7 +32,7 @@ nav {
 
 nav button {
   flex: 1;
-  padding: 12px;
+  padding: 14px;
   border: none;
   background: #2e5cb8;
   color: white;
@@ -40,63 +40,81 @@ nav button {
   cursor: pointer;
 }
 
-nav button:hover {
+nav button:hover,
+nav button.active {
   background: #d4af37;
   color: black;
 }
 
 .page {
   display: none;
-  padding: 15px;
+  padding: 20px;
 }
 
 .active {
   display: block;
 }
 
+/* TABLES */
 table {
   width: 100%;
   border-collapse: collapse;
   background: white;
-  margin-top: 10px;
+  margin-top: 15px;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 th {
   background: #1f3c88;
   color: white;
-  padding: 10px;
+  padding: 12px;
 }
 
 td {
-  padding: 8px;
-  border-bottom: 1px solid #ddd;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
   text-align: center;
 }
 
-/* Fixtures bold teams */
-#f1 td:nth-child(2),
-#f1 td:nth-child(5),
-#f2 td:nth-child(2),
-#f2 td:nth-child(5) {
+/* KNOCKOUT STYLE */
+.bracket {
+  display: grid;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.match {
+  background: white;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.match .teams {
+  display: flex;
+  justify-content: space-between;
   font-weight: bold;
 }
 
-/* League table bold team names */
-#t1 td:nth-child(2),
-#t2 td:nth-child(2) {
+.match .score {
+  margin: 5px 0;
+  font-size: 18px;
+  text-align: center;
+}
+
+.match .details {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+}
+
+.stage {
+  margin-top: 25px;
   font-weight: bold;
-}
-
-/* Honors styling */
-#honors th {
-  background: #d4af37;
-  color: black;
-}
-
-/* Knockout headings */
-#knockout h2 {
-  margin-top: 20px;
   color: #1f3c88;
+  border-left: 4px solid #d4af37;
+  padding-left: 10px;
 }
 </style>
 </head>
@@ -143,9 +161,12 @@ const sheetID = "1e3Tl5l6zLqx8Vbk6PX1U13eRyZ2McFd2qcLJhmWGh5g";
 function show(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
 }
 
-function load(sheet, element){
+function loadTable(sheet, element){
   const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
 
   fetch(url)
@@ -157,44 +178,19 @@ function load(sheet, element){
 
     let html = "<table><tr>";
 
-    let maxCols;
+    let maxCols = cols.length;
 
-    if(sheet.includes("Fixtures")){
-      maxCols = 6;
-    } else if(sheet.includes("League Table")){
-      maxCols = 16;
-    } else if(sheet.includes("Knockout")){
-      maxCols = 7;
-    } else {
-      maxCols = cols.length;
-    }
-
-    // ✅ FIXED HEADERS FOR KNOCKOUT
-    if(sheet.includes("Knockout")){
-      html += `
-        <th>Stage</th>
-        <th>Home Team</th>
-        <th>Home Score</th>
-        <th>Away Score</th>
-        <th>Away Team</th>
-        <th>Date</th>
-        <th>Venue</th>
-      `;
-    } else {
-      cols.slice(0, maxCols).forEach(c => {
-        html += `<th>${c.label || ""}</th>`;
-      });
-    }
+    cols.forEach(c => {
+      html += `<th>${c.label || ""}</th>`;
+    });
 
     html += "</tr>";
 
-    // rows
     rows.forEach(r => {
       if(!r.c) return;
-
       html += "<tr>";
 
-      r.c.slice(0, maxCols).forEach(c => {
+      r.c.forEach(c => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
         html += `<td>${value}</td>`;
       });
@@ -203,26 +199,68 @@ function load(sheet, element){
     });
 
     html += "</table>";
+    document.getElementById(element).innerHTML = html;
+  });
+}
+
+function loadKnockout(sheet, element){
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
+
+  fetch(url)
+  .then(res => res.text())
+  .then(data => {
+    const json = JSON.parse(data.substr(47).slice(0,-2));
+    const rows = json.table.rows;
+
+    let html = "";
+    let currentStage = "";
+
+    rows.forEach(r => {
+      if(!r.c) return;
+
+      const stage = r.c[0]?.v || "";
+      const home = r.c[1]?.v || "";
+      const hs = r.c[2]?.v ?? "";
+      const as = r.c[3]?.v ?? "";
+      const away = r.c[4]?.v || "";
+      const date = r.c[5]?.f || "";
+      const venue = r.c[6]?.v || "";
+
+      if(stage !== currentStage){
+        html += `<div class="stage">${stage}</div>`;
+        currentStage = stage;
+      }
+
+      html += `
+        <div class="match">
+          <div class="teams">
+            <span>${home}</span>
+            <span>${away}</span>
+          </div>
+          <div class="score">${hs} - ${as}</div>
+          <div class="details">${date} | ${venue}</div>
+        </div>
+      `;
+    });
 
     document.getElementById(element).innerHTML = html;
   });
 }
 
-// LOAD DATA
-load("1st Team Fixtures","f1");
-load("1st Team League Table (Sorted)","t1");
-load("2nd Team Fixtures","f2");
-load("2nd Team League Table (Sorted)","t2");
+// NORMAL TABLES
+loadTable("1st Team Fixtures","f1");
+loadTable("1st Team League Table (Sorted)","t1");
+loadTable("2nd Team Fixtures","f2");
+loadTable("2nd Team League Table (Sorted)","t2");
 
-// ✅ Knockout split
-load("Knockout Finals 1st Team","ko1");
-load("Knockout Finals 2nd Team","ko2");
+// KNOCKOUT (NEW STYLE)
+loadKnockout("Knockout Finals 1st Team","ko1");
+loadKnockout("Knockout Finals 2nd Team","ko2");
 
-load("Rules","rules");
-load("Honors","honors");
-load("Contacts","contacts");
+loadTable("Rules","rules");
+loadTable("Honors","honors");
+loadTable("Contacts","contacts");
 
-// default page
 show("f1");
 </script>
 
