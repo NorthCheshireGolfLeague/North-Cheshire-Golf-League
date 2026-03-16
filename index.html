@@ -77,10 +77,23 @@ td {
   text-align: center;
 }
 
-/* KNOCKOUT STYLE */
+/* Hover */
+tr:hover {
+  background: #dfe8ff !important;
+}
+
+/* Bold team names */
+#f1 td:nth-child(2),
+#f1 td:nth-child(5),
+#f2 td:nth-child(2),
+#f2 td:nth-child(5),
+#t1 td:nth-child(2),
+#t2 td:nth-child(2) {
+  font-weight: bold;
+}
+
+/* Knockout */
 .bracket {
-  display: grid;
-  gap: 15px;
   margin-top: 15px;
 }
 
@@ -88,6 +101,7 @@ td {
   background: white;
   border-radius: 10px;
   padding: 12px;
+  margin-bottom: 10px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
@@ -98,15 +112,15 @@ td {
 }
 
 .match .score {
+  text-align: center;
   margin: 5px 0;
   font-size: 18px;
-  text-align: center;
 }
 
 .match .details {
+  text-align: center;
   font-size: 12px;
   color: #666;
-  text-align: center;
 }
 
 .stage {
@@ -178,19 +192,38 @@ function loadTable(sheet, element){
 
     let html = "<table><tr>";
 
-    let maxCols = cols.length;
+    let maxCols;
 
-    cols.forEach(c => {
+    if(sheet.includes("Fixtures")){
+      maxCols = 6;
+    } else {
+      maxCols = cols.length;
+    }
+
+    cols.slice(0, maxCols).forEach(c => {
       html += `<th>${c.label || ""}</th>`;
     });
 
     html += "</tr>";
 
+    let lastRound = null;
+    let alt = false;
+
     rows.forEach(r => {
       if(!r.c) return;
-      html += "<tr>";
 
-      r.c.forEach(c => {
+      let round = r.c[0]?.v || "";
+
+      if(round !== lastRound){
+        alt = !alt;
+        lastRound = round;
+      }
+
+      let bg = (sheet.includes("Fixtures") && alt) ? "background:#eef3ff;" : "";
+
+      html += `<tr style="${bg}">`;
+
+      r.c.slice(0, maxCols).forEach(c => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
         html += `<td>${value}</td>`;
       });
@@ -247,13 +280,12 @@ function loadKnockout(sheet, element){
   });
 }
 
-// NORMAL TABLES
+// LOAD DATA
 loadTable("1st Team Fixtures","f1");
 loadTable("1st Team League Table (Sorted)","t1");
 loadTable("2nd Team Fixtures","f2");
 loadTable("2nd Team League Table (Sorted)","t2");
 
-// KNOCKOUT (NEW STYLE)
 loadKnockout("Knockout Finals 1st Team","ko1");
 loadKnockout("Knockout Finals 2nd Team","ko2");
 
