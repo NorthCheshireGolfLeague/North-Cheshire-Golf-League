@@ -15,31 +15,30 @@ html, body {
   background: #f4f6f8;
 }
 
-/* FULL WIDTH HEADER */
+/* HEADER (FIXED FULL WIDTH) */
 .header {
   text-align: center;
   padding: 20px;
   background: linear-gradient(135deg, #1f3c88, #2e5cb8);
   color: white;
-
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .header img {
   width: 100px;
 }
 
+/* NAVIGATION (FULL WIDTH GRID) */
 nav {
-  display: flex;
-  flex-wrap: wrap;
-  background: #2e5cb8;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
 }
 
 nav button {
-  flex: 1;
   padding: 10px;
-  border: none;
+  border: 1px solid rgba(255,255,255,0.2);
   background: #2e5cb8;
   color: white;
   font-weight: bold;
@@ -98,7 +97,7 @@ tr:hover {
   font-weight: bold;
 }
 
-/* Knockout */
+/* Knockout styling */
 .match {
   background: white;
   border-radius: 8px;
