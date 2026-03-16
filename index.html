@@ -263,13 +263,7 @@ tr:first-child td {
 <div id="t1" class="page"></div>
 <div id="f2" class="page"></div>
 <div id="t2" class="page"></div>
-<div id="knockout" class="page">
-  <h2>1st Team Knockout</h2>
-  <div id="ko1"></div>
-
-  <h2>2nd Team Knockout</h2>
-  <div id="ko2"></div>
-</div>
+<div id="knockout" class="page"></div>
 <div id="rules" class="page"></div>
 <div id="honors" class="page"></div>
 <div id="contacts" class="page"></div>
@@ -320,13 +314,22 @@ if(sheet.includes("Fixtures")){
   let lastRound = null;
 let useAlt = false;
 
-rows.forEach(r=>{
-  const round = r.c[0] ? r.c[0].v : "";
+rows.forEach((r, i)=>{
+  // skip header row duplication issues
+  if(i === 0) return;
 
-  if(round !== lastRound){
-    useAlt = !useAlt;
-    lastRound = round;
-  }
+  // skip empty rows
+  if(!r.c || !r.c[0] || !r.c[0].v) return;
+
+  html += "<tr>";
+
+  r.c.slice(0,maxCols).forEach(c=>{
+    let value = c && (c.f || c.v) ? (c.f || c.v) : "";
+    html += `<td>${value}</td>`;
+  });
+
+  html += "</tr>";
+});
 
   let rowStyle = useAlt ? "background:#eef3ff;" : "";
 
@@ -346,8 +349,8 @@ load("1st Team Fixtures","f1");
 load("1st Team League Table (Sorted)","t1");
 load("2nd Team Fixtures","f2");
 load("2nd Team League Table (Sorted)","t2");
-load("Knockout 1st Team","ko1");
-load("Knockout 2nd Team","k02");
+load("Knockout 1st Team","knockout 1st team");
+load("Knockout 2nd Team","knockout 2nd team");
 load("Rules","rules");
 load("Honors","honors");
 load("Contacts","contacts");
