@@ -15,11 +15,15 @@ html, body {
   background: #f4f6f8;
 }
 
+/* FULL WIDTH HEADER */
 .header {
   text-align: center;
   padding: 20px;
   background: linear-gradient(135deg, #1f3c88, #2e5cb8);
   color: white;
+
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
 }
 
 .header img {
@@ -57,7 +61,7 @@ nav button:hover {
   display: block;
 }
 
-/* TABLES (NO SIDE SCROLL) */
+/* TABLES */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -141,11 +145,11 @@ tr:hover {
 </div>
 
 <nav>
-  <button onclick="show('f1')">Fixtures 1</button>
-  <button onclick="show('t1')">Table 1</button>
-  <button onclick="show('f2')">Fixtures 2</button>
-  <button onclick="show('t2')">Table 2</button>
-  <button onclick="show('knockout')">Knockout</button>
+  <button onclick="show('f1')">1st Team Fixtures</button>
+  <button onclick="show('t1')">1st Team League Table</button>
+  <button onclick="show('f2')">2nd Team Fixtures</button>
+  <button onclick="show('t2')">2nd Team League Table</button>
+  <button onclick="show('knockout')">Knockout Finals</button>
   <button onclick="show('rules')">Rules</button>
   <button onclick="show('honors')">Honors</button>
   <button onclick="show('contacts')">Contacts</button>
