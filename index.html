@@ -315,8 +315,9 @@ if(sheet.includes("Fixtures")){
   maxCols = cols.length;
 }
 
-      html += `<th>${c.label||""}</th>`;
-    });
+     cols.slice(0,maxCols).forEach(c=>{
+  html += `<th>${c.label||""}</th>`;
+});
 
     html += "</tr>";
 
