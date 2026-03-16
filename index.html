@@ -1,17 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
-
-<link rel="apple-touch-icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="NCL League">
-
-<meta name="theme-color" content="#1f3c88">
 <meta charset="UTF-8">
 <title>NCL League</title>
+
+<link rel="icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
+
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -26,6 +20,10 @@ body {
   color: white;
 }
 
+.header img {
+  width: 120px;
+}
+
 nav {
   display: flex;
   flex-wrap: wrap;
@@ -38,8 +36,8 @@ nav button {
   border: none;
   background: #2e5cb8;
   color: white;
-  cursor: pointer;
   font-weight: bold;
+  cursor: pointer;
 }
 
 nav button:hover {
@@ -61,25 +59,20 @@ table {
   border-collapse: collapse;
   background: white;
   margin-top: 10px;
-  border-radius: 8px;
-  overflow: hidden;
- font-size: 14px;
 }
 
 th {
   background: #1f3c88;
   color: white;
   padding: 10px;
-  text-align: center;
 }
 
 td {
   padding: 8px;
   border-bottom: 1px solid #ddd;
   text-align: center;
-
 }
-/* Fixtures only */
+
 #f1 td:nth-child(2),
 #f1 td:nth-child(5),
 #f2 td:nth-child(2),
@@ -87,160 +80,19 @@ td {
   font-weight: bold;
 }
 
-/* League tables only */
 #t1 td:nth-child(2),
 #t2 td:nth-child(2) {
   font-weight: bold;
-}
-
-tr:hover {
-  background: #f1f1f1;
-}
-
-table tr:first-child td {
-  background: transparent;
-  font-weight: normal;
-}
-
-.header img {
-  width: 120px;
-  height: auto;
-  margin-bottom: 10px;
-}
-
-nav button.active-tab {
-  background: #d4af37;
-  color: black;
-}
-
-/* Honors table styling */
-#honors table {
-  border: 2px solid #d4af37;
 }
 
 #honors th {
   background: #d4af37;
   color: black;
 }
-
-#honors td:nth-child(2) {
-  font-weight: bold;
-  color: #1f3c88;
-}
 </style>
 </head>
 
 <body>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #f4f6f8;
-}
-
-.header {
-  text-align: center;
-  padding: 20px;
-  background: #1f3c88;
-  color: white;
-}
-
-nav {
-  display: flex;
-  flex-wrap: wrap;
-  background: #2e5cb8;
-}
-
-nav button {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  background: #2e5cb8;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-nav button:hover {
-  background: #d4af37;
-  color: black;
-}
-
-.page {
-  display: none;
-  padding: 15px;
-}
-
-.active {
-  display: block;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  margin-top: 10px;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-th {
-  background: #1f3c88;
-  color: white;
-  padding: 10px;
-}
-
-td {
-  padding: 8px;
-  border-bottom: 1px solid #ddd;
-}
-
-tr:hover {
-  background: #f1f1f1;
-}
-
-tr:first-child td {
-  background: #d4af37;
-  font-weight: bold;
-}
-
-#knockout table {
-  border: 2px solid #d4af37;
-}
-
-#knockout th {
-  background: #1f3c88;
-}
-
-#knockout td:first-child {
-  font-weight: bold;
-  background: #eef3ff;
-}
-
-/* Quarter Finals */
-#knockout tr:nth-child(2),
-#knockout tr:nth-child(3),
-#knockout tr:nth-child(15),
-#knockout tr:nth-child(16) {
-  border-left: 5px solid #1f3c88;
-}
-
-/* Semi Finals */
-#knockout tr:nth-child(5),
-#knockout tr:nth-child(6),
-#knockout tr:nth-child(18),
-#knockout tr:nth-child(19) {
-  border-left: 5px solid #d4af37;
-}
-
-/* Final */
-#knockout tr:nth-child(8),
-#knockout tr:nth-child(21) {
-  border-left: 5px solid green;
-  font-weight: bold;
-}
-
-</style>
 
 <div class="header">
   <img src="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
@@ -271,92 +123,74 @@ tr:first-child td {
 <script>
 const sheetID = "1e3Tl5l6zLqx8Vbk6PX1U13eRyZ2McFd2qcLJhmWGh5g";
 
-
 function show(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active-tab'));
 }
 
 function load(sheet, element){
-
   const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
-  
+
   fetch(url)
-  .then(res=>res.text())
-  .then(data=>{
+  .then(res => res.text())
+  .then(data => {
     const json = JSON.parse(data.substr(47).slice(0,-2));
     const rows = json.table.rows;
     const cols = json.table.cols;
 
     let html = "<table><tr>";
 
-    // ONLY show first 6 columns (A–F)
-  let maxCols;
+    let maxCols;
 
-if(sheet.includes("Fixtures")){
-  maxCols = 6;
-} else if(sheet.includes("League Table")){
-  maxCols = 16;
-} else if(sheet.includes("Knockout")){
-  maxCols = 7;
-} else {
-  maxCols = cols.length;
-}
+    if(sheet.includes("Fixtures")){
+      maxCols = 6;
+    } else if(sheet.includes("League Table")){
+      maxCols = 16;
+    } else if(sheet.includes("Knockout")){
+      maxCols = 7;
+    } else {
+      maxCols = cols.length;
+    }
 
-     cols.slice(0,maxCols).forEach(c=>{
-  html += `<th>${c.label||""}</th>`;
-});
+    // headers
+    cols.slice(0, maxCols).forEach(c => {
+      html += `<th>${c.label || ""}</th>`;
+    });
 
     html += "</tr>";
 
-  let lastRound = null;
-let useAlt = false;
+    // rows
+    rows.forEach(r => {
+      if(!r.c) return;
 
-rows.forEach((r, i)=>{
-  // skip header row duplication issues
-  if(i === 0) return;
+      html += "<tr>";
 
-  // skip empty rows
-  if(!r.c || !r.c[0] || !r.c[0].v) return;
-
-  html += "<tr>";
-
-  r.c.slice(0,maxCols).forEach(c=>{
-    let value = c && (c.f || c.v) ? (c.f || c.v) : "";
-    html += `<td>${value}</td>`;
-  });
-
-  html += "</tr>";
-});
-
-  let rowStyle = useAlt ? "background:#eef3ff;" : "";
-
-  html += `<tr style="${rowStyle}">`;
-      r.c.slice(0,maxCols).forEach(c=>{
-        html += `<td>${c && c.v != null ? c.v : ""}</td>`;
+      r.c.slice(0, maxCols).forEach(c => {
+        let value = c && (c.f || c.v) ? (c.f || c.v) : "";
+        html += `<td>${value}</td>`;
       });
+
       html += "</tr>";
     });
 
     html += "</table>";
+
     document.getElementById(element).innerHTML = html;
   });
 }
 
+// LOAD ALL DATA
 load("1st Team Fixtures","f1");
 load("1st Team League Table (Sorted)","t1");
 load("2nd Team Fixtures","f2");
 load("2nd Team League Table (Sorted)","t2");
-load("Knockout 1st Team","knockout 1st team");
-load("Knockout 2nd Team","knockout 2nd team");
+load("Knockout Finals","knockout");
 load("Rules","rules");
 load("Honors","honors");
 load("Contacts","contacts");
 
+// default page
 show("f1");
-document.querySelector('nav button').classList.add('active-tab');
 </script>
 
 </body>
