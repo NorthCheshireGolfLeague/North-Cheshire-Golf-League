@@ -73,6 +73,7 @@ td {
   text-align: center;
 }
 
+/* Fixtures bold teams */
 #f1 td:nth-child(2),
 #f1 td:nth-child(5),
 #f2 td:nth-child(2),
@@ -80,14 +81,22 @@ td {
   font-weight: bold;
 }
 
+/* League table bold team names */
 #t1 td:nth-child(2),
 #t2 td:nth-child(2) {
   font-weight: bold;
 }
 
+/* Honors styling */
 #honors th {
   background: #d4af37;
   color: black;
+}
+
+/* Knockout styling */
+#knockout h2 {
+  margin-top: 20px;
+  color: #1f3c88;
 }
 </style>
 </head>
@@ -115,7 +124,15 @@ td {
 <div id="t1" class="page"></div>
 <div id="f2" class="page"></div>
 <div id="t2" class="page"></div>
-<div id="knockout" class="page"></div>
+
+<div id="knockout" class="page">
+  <h2>1st Team Knockout</h2>
+  <div id="ko1"></div>
+
+  <h2>2nd Team Knockout</h2>
+  <div id="ko2"></div>
+</div>
+
 <div id="rules" class="page"></div>
 <div id="honors" class="page"></div>
 <div id="contacts" class="page"></div>
@@ -179,12 +196,16 @@ function load(sheet, element){
   });
 }
 
-// LOAD ALL DATA
+// LOAD DATA
 load("1st Team Fixtures","f1");
 load("1st Team League Table (Sorted)","t1");
 load("2nd Team Fixtures","f2");
 load("2nd Team League Table (Sorted)","t2");
-load("Knockout Finals","knockout");
+
+// 👇 IMPORTANT — knockout split
+load("Knockout Finals 1st Team","ko1");
+load("Knockout Finals 2nd Team","ko2");
+
 load("Rules","rules");
 load("Honors","honors");
 load("Contacts","contacts");
