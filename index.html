@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NCL League</title>
 
 <link rel="icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
@@ -16,14 +17,13 @@ html, body {
 
 .header {
   text-align: center;
-  padding: 25px;
+  padding: 20px;
   background: linear-gradient(135deg, #1f3c88, #2e5cb8);
   color: white;
-  width: 100%;
 }
 
 .header img {
-  width: 110px;
+  width: 100px;
 }
 
 nav {
@@ -34,11 +34,12 @@ nav {
 
 nav button {
   flex: 1;
-  padding: 14px;
+  padding: 10px;
   border: none;
   background: #2e5cb8;
   color: white;
   font-weight: bold;
+  font-size: 12px;
   cursor: pointer;
 }
 
@@ -50,41 +51,39 @@ nav button.active {
 
 .page {
   display: none;
-  padding: 20px;
+  padding: 10px;
 }
 
 .active {
   display: block;
 }
 
-/* TABLES */
+/* TABLES (NO SIDE SCROLL) */
 table {
   width: 100%;
   border-collapse: collapse;
   background: white;
-  margin-top: 15px;
-  border-radius: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
   overflow: hidden;
-  display: block;
-  overflow-x: auto;
-  white-space: nowrap;
+  font-size: 12px;
 }
 
 th {
   background: #1f3c88;
   color: white;
-  padding: 12px;
+  padding: 8px;
 }
 
 td {
-  padding: 10px;
+  padding: 6px;
   border-bottom: 1px solid #eee;
   text-align: center;
 }
 
 /* Hover */
 tr:hover {
-  background: #dfe8ff !important;
+  background: #dfe8ff;
 }
 
 /* Bold team names */
@@ -100,22 +99,205 @@ tr:hover {
 /* Knockout styling */
 .match {
   background: white;
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
 }
 
 .match .teams {
   display: flex;
   justify-content: space-between;
   font-weight: bold;
+  font-size: 13px;
 }
 
 .match .score {
   text-align: center;
-  margin: 5px 0;
-  font-size: 18px;
+  margin: 4px 0;
+  font-size: 16px;
 }
 
-.match
+.match .details {
+  text-align: center;
+  font-size: 11px;
+  color: #666;
+}
+
+.stage {
+  margin-top: 20px;
+  font-weight: bold;
+  color: #1f3c88;
+  border-left: 4px solid #d4af37;
+  padding-left: 8px;
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <img src="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
+  <h2>North Cheshire Golf League</h2>
+</div>
+
+<nav>
+  <button onclick="show('f1')">Fixtures 1</button>
+  <button onclick="show('t1')">Table 1</button>
+  <button onclick="show('f2')">Fixtures 2</button>
+  <button onclick="show('t2')">Table 2</button>
+  <button onclick="show('knockout')">Knockout</button>
+  <button onclick="show('rules')">Rules</button>
+  <button onclick="show('honors')">Honors</button>
+  <button onclick="show('contacts')">Contacts</button>
+</nav>
+
+<div id="f1" class="page"></div>
+<div id="t1" class="page"></div>
+<div id="f2" class="page"></div>
+<div id="t2" class="page"></div>
+
+<div id="knockout" class="page">
+  <h3>1st Team</h3>
+  <div id="ko1"></div>
+
+  <h3>2nd Team</h3>
+  <div id="ko2"></div>
+</div>
+
+<div id="rules" class="page"></div>
+<div id="honors" class="page"></div>
+<div id="contacts" class="page"></div>
+
+<script>
+const sheetID = "1e3Tl5l6zLqx8Vbk6PX1U13eRyZ2McFd2qcLJhmWGh5g";
+
+function show(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function loadTable(sheet, element){
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
+
+  fetch(url)
+  .then(res => res.text())
+  .then(data => {
+    const json = JSON.parse(data.substr(47).slice(0,-2));
+    const rows = json.table.rows;
+    const cols = json.table.cols;
+
+    let html = "<table><tr>";
+
+    let maxCols;
+
+    if(sheet.includes("Fixtures")){
+      maxCols = 6;
+    } else if(sheet.includes("League Table")){
+      maxCols = 16;
+    } else {
+      maxCols = cols.length;
+    }
+
+    cols.slice(0, maxCols).forEach(c => {
+      html += `<th>${c.label || ""}</th>`;
+    });
+
+    html += "</tr>";
+
+    let lastRound = null;
+    let alt = false;
+
+    rows.forEach(r => {
+      if(!r.c) return;
+
+      let round = r.c[0]?.v || "";
+
+      if(round !== lastRound){
+        alt = !alt;
+        lastRound = round;
+      }
+
+      let bg = (sheet.includes("Fixtures") && alt) ? "background:#eef3ff;" : "";
+
+      html += `<tr style="${bg}">`;
+
+      r.c.slice(0, maxCols).forEach(c => {
+        let value = c && (c.f || c.v) ? (c.f || c.v) : "";
+        html += `<td>${value}</td>`;
+      });
+
+      html += "</tr>";
+    });
+
+    html += "</table>";
+    document.getElementById(element).innerHTML = html;
+  });
+}
+
+function loadKnockout(sheet, element){
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
+
+  fetch(url)
+  .then(res => res.text())
+  .then(data => {
+    const json = JSON.parse(data.substr(47).slice(0,-2));
+    const rows = json.table.rows;
+
+    let html = "";
+    let currentStage = "";
+
+    rows.forEach(r => {
+      if(!r.c) return;
+
+      const stage = r.c[0]?.v || "";
+      const home = r.c[1]?.v || "";
+      const hs = r.c[2]?.v ?? "";
+      const as = r.c[3]?.v ?? "";
+      const away = r.c[4]?.v || "";
+      const date = r.c[5]?.f || "";
+      const venue = r.c[6]?.v || "";
+
+      if(stage !== currentStage){
+        html += `<div class="stage">${stage}</div>`;
+        currentStage = stage;
+      }
+
+      html += `
+        <div class="match">
+          <div class="teams">
+            <span>${home}</span>
+            <span>${away}</span>
+          </div>
+          <div class="score">${hs} - ${as}</div>
+          <div class="details">${date} | ${venue}</div>
+        </div>
+      `;
+    });
+
+    document.getElementById(element).innerHTML = html;
+  });
+}
+
+// LOAD DATA
+loadTable("1st Team Fixtures","f1");
+loadTable("1st Team League Table (Sorted)","t1");
+loadTable("2nd Team Fixtures","f2");
+loadTable("2nd Team League Table (Sorted)","t2");
+
+loadKnockout("Knockout Finals 1st Team","ko1");
+loadKnockout("Knockout Finals 2nd Team","ko2");
+
+loadTable("Rules","rules");
+loadTable("Honors","honors");
+loadTable("Contacts","contacts");
+
+show("f1");
+</script>
+
+</body>
+</html>
