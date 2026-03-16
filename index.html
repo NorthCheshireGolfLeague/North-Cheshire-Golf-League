@@ -93,7 +93,7 @@ td {
   color: black;
 }
 
-/* Knockout styling */
+/* Knockout headings */
 #knockout h2 {
   margin-top: 20px;
   color: #1f3c88;
@@ -169,10 +169,22 @@ function load(sheet, element){
       maxCols = cols.length;
     }
 
-    // headers
-    cols.slice(0, maxCols).forEach(c => {
-      html += `<th>${c.label || ""}</th>`;
-    });
+    // ✅ FIXED HEADERS FOR KNOCKOUT
+    if(sheet.includes("Knockout")){
+      html += `
+        <th>Stage</th>
+        <th>Home Team</th>
+        <th>Home Score</th>
+        <th>Away Score</th>
+        <th>Away Team</th>
+        <th>Date</th>
+        <th>Venue</th>
+      `;
+    } else {
+      cols.slice(0, maxCols).forEach(c => {
+        html += `<th>${c.label || ""}</th>`;
+      });
+    }
 
     html += "</tr>";
 
@@ -202,7 +214,7 @@ load("1st Team League Table (Sorted)","t1");
 load("2nd Team Fixtures","f2");
 load("2nd Team League Table (Sorted)","t2");
 
-// 👇 IMPORTANT — knockout split
+// ✅ Knockout split
 load("Knockout Finals 1st Team","ko1");
 load("Knockout Finals 2nd Team","ko2");
 
