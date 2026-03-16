@@ -43,8 +43,7 @@ nav button {
   cursor: pointer;
 }
 
-nav button:hover,
-nav button.active {
+nav button:hover {
   background: #d4af37;
   color: black;
 }
@@ -81,7 +80,6 @@ td {
   text-align: center;
 }
 
-/* Hover */
 tr:hover {
   background: #dfe8ff;
 }
@@ -96,7 +94,7 @@ tr:hover {
   font-weight: bold;
 }
 
-/* Knockout styling */
+/* Knockout */
 .match {
   background: white;
   border-radius: 8px;
@@ -176,9 +174,6 @@ const sheetID = "1e3Tl5l6zLqx8Vbk6PX1U13eRyZ2McFd2qcLJhmWGh5g";
 function show(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-  event.target.classList.add('active');
 }
 
 function loadTable(sheet, element){
