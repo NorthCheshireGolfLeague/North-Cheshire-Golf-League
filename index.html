@@ -5,12 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NCL League</title>
 
+<!-- Standard icon -->
 <link rel="icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
+
+<!-- ✅ iPhone icon FIX -->
 <link rel="apple-touch-icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
 
 <style>
 html, body {
   margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
   background: #f4f6f8;
 }
@@ -21,12 +26,19 @@ html, body {
   padding: 20px;
   background: linear-gradient(135deg, #1f3c88, #2e5cb8);
   color: white;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header img {
+  width: 100px;
 }
 
 /* NAV */
 nav {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  width: 100%;
   background: #2e5cb8;
 }
 
@@ -55,7 +67,7 @@ nav button:hover {
   display: block;
 }
 
-/* TABLE */
+/* TABLES */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -77,12 +89,31 @@ td {
   text-align: center;
 }
 
-/* Sticky team column */
+tr:hover {
+  background: #dfe8ff;
+}
+
+/* FIXTURES (NO SCROLL) */
+#f1 table,
+#f2 table {
+  display: table;
+}
+
+/* LEAGUE TABLES (SCROLL ENABLED) */
+#t1 table,
+#t2 table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* STICKY TEAM COLUMN */
 #t1 td:nth-child(2),
 #t2 td:nth-child(2) {
   position: sticky;
   left: 0;
   background: white;
+  z-index: 2;
   font-weight: bold;
 }
 
@@ -91,34 +122,43 @@ td {
   position: sticky;
   left: 0;
   background: #1f3c88;
-}
-
-/* Buttons */
-.btn {
-  display: inline-block;
-  padding: 4px 8px;
-  margin: 2px;
-  border-radius: 6px;
-  font-size: 11px;
-  text-decoration: none;
   color: white;
+  z-index: 3;
 }
 
-.call-btn { background: #1f3c88; }
-.whatsapp-btn { background: #d4af37; color:black; font-weight:bold; }
-
-/* Knockout cards */
+/* Knockout */
 .match {
   background: white;
-  padding: 10px;
-  margin: 8px 0;
   border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.match .teams {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.match .score {
+  text-align: center;
+  margin: 4px 0;
+  font-size: 16px;
+}
+
+.match .details {
+  text-align: center;
+  font-size: 11px;
+  color: #666;
 }
 
 .stage {
-  margin-top: 15px;
+  margin-top: 20px;
   font-weight: bold;
   color: #1f3c88;
+  border-left: 4px solid #d4af37;
+  padding-left: 8px;
 }
 </style>
 </head>
@@ -126,7 +166,7 @@ td {
 <body>
 
 <div class="header">
-  <img src="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png" width="100">
+  <img src="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
   <h2>North Cheshire Golf League</h2>
 </div>
 
@@ -170,42 +210,50 @@ function loadTable(sheet, element){
   const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
 
   fetch(url)
-  .then(res=>res.text())
-  .then(data=>{
+  .then(res => res.text())
+  .then(data => {
     const json = JSON.parse(data.substr(47).slice(0,-2));
     const rows = json.table.rows;
     const cols = json.table.cols;
 
     let html = "<table><tr>";
 
-    let maxCols = sheet.includes("Fixtures") ? 6 : sheet.includes("League Table") ? 16 : cols.length;
+    let maxCols;
 
-    cols.slice(0,maxCols).forEach((c,i)=>{
-      let header = c.label || "";
-      html += `<th>${header}</th>`;
+    if(sheet.includes("Fixtures")){
+      maxCols = 6;
+    } else if(sheet.includes("League Table")){
+      maxCols = 16;
+    } else {
+      maxCols = cols.length;
+    }
+
+    cols.slice(0, maxCols).forEach(c => {
+      html += `<th>${c.label || ""}</th>`;
     });
 
     html += "</tr>";
 
-    rows.forEach(r=>{
+    let lastRound = null;
+    let alt = false;
+
+    rows.forEach(r => {
       if(!r.c) return;
 
-      html += "<tr>";
+      let round = r.c[0]?.v || "";
 
-      r.c.slice(0,maxCols).forEach(c=>{
+      if(round !== lastRound){
+        alt = !alt;
+        lastRound = round;
+      }
+
+      let bg = (sheet.includes("Fixtures") && alt) ? "background:#eef3ff;" : "";
+
+      html += `<tr style="${bg}">`;
+
+      r.c.slice(0, maxCols).forEach(c => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
-
-        if(element === "contacts" && value && value.toString().startsWith("07")){
-          let clean = value.replace(/\s/g,"");
-
-          html += `<td>
-            ${value}<br>
-            <a class="btn call-btn" href="tel:${clean}">Call</a>
-            <a class="btn whatsapp-btn" href="https://wa.me/44${clean.substring(1)}">Message</a>
-          </td>`;
-        } else {
-          html += `<td>${value}</td>`;
-        }
+        html += `<td>${value}</td>`;
       });
 
       html += "</tr>";
@@ -216,20 +264,19 @@ function loadTable(sheet, element){
   });
 }
 
-/* KNOCKOUT */
-function loadKO(sheet, element){
+function loadKnockout(sheet, element){
   const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
 
   fetch(url)
-  .then(res=>res.text())
-  .then(data=>{
+  .then(res => res.text())
+  .then(data => {
     const json = JSON.parse(data.substr(47).slice(0,-2));
     const rows = json.table.rows;
 
     let html = "";
     let currentStage = "";
 
-    rows.forEach(r=>{
+    rows.forEach(r => {
       if(!r.c) return;
 
       const stage = r.c[0]?.v || "";
@@ -247,8 +294,12 @@ function loadKO(sheet, element){
 
       html += `
         <div class="match">
-          <div><strong>${home}</strong> ${hs} - ${as} <strong>${away}</strong></div>
-          <div style="font-size:11px;color:#666">${date} | ${venue}</div>
+          <div class="teams">
+            <span>${home}</span>
+            <span>${away}</span>
+          </div>
+          <div class="score">${hs} - ${as}</div>
+          <div class="details">${date} | ${venue}</div>
         </div>
       `;
     });
@@ -257,14 +308,14 @@ function loadKO(sheet, element){
   });
 }
 
-/* LOAD */
+// LOAD DATA
 loadTable("1st Team Fixtures","f1");
 loadTable("1st Team League Table (Sorted)","t1");
 loadTable("2nd Team Fixtures","f2");
 loadTable("2nd Team League Table (Sorted)","t2");
 
-loadKO("Knockout Finals 1st Team","ko1");
-loadKO("Knockout Finals 2nd Team","ko2");
+loadKnockout("Knockout Finals 1st Team","ko1");
+loadKnockout("Knockout Finals 2nd Team","ko2");
 
 loadTable("Rules","rules");
 loadTable("Honors","honors");
