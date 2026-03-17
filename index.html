@@ -11,7 +11,6 @@
 <style>
 html, body {
   margin: 0;
-  padding: 0;
   font-family: Arial, sans-serif;
   background: #f4f6f8;
 }
@@ -28,7 +27,6 @@ html, body {
 nav {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  width: 100%;
   background: #2e5cb8;
 }
 
@@ -57,7 +55,7 @@ nav button:hover {
   display: block;
 }
 
-/* TABLES */
+/* TABLE */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -79,14 +77,6 @@ td {
   text-align: center;
 }
 
-/* League tables scroll */
-#t1 table,
-#t2 table {
-  display: block;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
 /* Sticky team column */
 #t1 td:nth-child(2),
 #t2 td:nth-child(2) {
@@ -101,10 +91,9 @@ td {
   position: sticky;
   left: 0;
   background: #1f3c88;
-  color: white;
 }
 
-/* BUTTONS */
+/* Buttons */
 .btn {
   display: inline-block;
   padding: 4px 8px;
@@ -115,18 +104,21 @@ td {
   color: white;
 }
 
-.call-btn {
-  background: #1f3c88;
+.call-btn { background: #1f3c88; }
+.whatsapp-btn { background: #d4af37; color:black; font-weight:bold; }
+
+/* Knockout cards */
+.match {
+  background: white;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
 }
 
-.whatsapp-btn {
-  background: #d4af37;
-  color: black;
+.stage {
+  margin-top: 15px;
   font-weight: bold;
-}
-
-.btn:hover {
-  opacity: 0.8;
+  color: #1f3c88;
 }
 </style>
 </head>
@@ -153,7 +145,15 @@ td {
 <div id="t1" class="page"></div>
 <div id="f2" class="page"></div>
 <div id="t2" class="page"></div>
-<div id="knockout" class="page"></div>
+
+<div id="knockout" class="page">
+  <h3>1st Team</h3>
+  <div id="ko1"></div>
+
+  <h3>2nd Team</h3>
+  <div id="ko2"></div>
+</div>
+
 <div id="rules" class="page"></div>
 <div id="honors" class="page"></div>
 <div id="contacts" class="page"></div>
@@ -170,8 +170,8 @@ function loadTable(sheet, element){
   const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
 
   fetch(url)
-  .then(res => res.text())
-  .then(data => {
+  .then(res=>res.text())
+  .then(data=>{
     const json = JSON.parse(data.substr(47).slice(0,-2));
     const rows = json.table.rows;
     const cols = json.table.cols;
@@ -180,25 +180,23 @@ function loadTable(sheet, element){
 
     let maxCols = sheet.includes("Fixtures") ? 6 : sheet.includes("League Table") ? 16 : cols.length;
 
-    // FIXED HEADERS
-    cols.slice(0, maxCols).forEach((c, i) => {
-      let header = c.label || (i === 0 ? "Round" : i === 1 ? "Team" : "");
+    cols.slice(0,maxCols).forEach((c,i)=>{
+      let header = c.label || "";
       html += `<th>${header}</th>`;
     });
 
     html += "</tr>";
 
-    rows.forEach(r => {
+    rows.forEach(r=>{
       if(!r.c) return;
 
       html += "<tr>";
 
-      r.c.slice(0, maxCols).forEach(c => {
+      r.c.slice(0,maxCols).forEach(c=>{
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // CONTACT BUTTONS
         if(element === "contacts" && value && value.toString().startsWith("07")){
-          let clean = value.toString().replace(/\s/g, "");
+          let clean = value.replace(/\s/g,"");
 
           html += `<td>
             ${value}<br>
@@ -218,11 +216,56 @@ function loadTable(sheet, element){
   });
 }
 
-// LOAD DATA
+/* KNOCKOUT */
+function loadKO(sheet, element){
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
+
+  fetch(url)
+  .then(res=>res.text())
+  .then(data=>{
+    const json = JSON.parse(data.substr(47).slice(0,-2));
+    const rows = json.table.rows;
+
+    let html = "";
+    let currentStage = "";
+
+    rows.forEach(r=>{
+      if(!r.c) return;
+
+      const stage = r.c[0]?.v || "";
+      const home = r.c[1]?.v || "";
+      const hs = r.c[2]?.v ?? "";
+      const as = r.c[3]?.v ?? "";
+      const away = r.c[4]?.v || "";
+      const date = r.c[5]?.f || "";
+      const venue = r.c[6]?.v || "";
+
+      if(stage !== currentStage){
+        html += `<div class="stage">${stage}</div>`;
+        currentStage = stage;
+      }
+
+      html += `
+        <div class="match">
+          <div><strong>${home}</strong> ${hs} - ${as} <strong>${away}</strong></div>
+          <div style="font-size:11px;color:#666">${date} | ${venue}</div>
+        </div>
+      `;
+    });
+
+    document.getElementById(element).innerHTML = html;
+  });
+}
+
+/* LOAD */
 loadTable("1st Team Fixtures","f1");
 loadTable("1st Team League Table (Sorted)","t1");
 loadTable("2nd Team Fixtures","f2");
 loadTable("2nd Team League Table (Sorted)","t2");
+
+loadKO("Knockout Finals 1st Team","ko1");
+loadKO("Knockout Finals 2nd Team","ko2");
+
 loadTable("Rules","rules");
 loadTable("Honors","honors");
 loadTable("Contacts","contacts");
