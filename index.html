@@ -5,12 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NCL League</title>
 
-<!-- Standard icon -->
 <link rel="icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
-
-<!-- ✅ iPhone icon FIX -->
 <link rel="apple-touch-icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
-<link rel="apple-touch-icon" sizes="180x180" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
 
 <style>
 html, body {
@@ -93,13 +89,13 @@ tr:hover {
   background: #dfe8ff;
 }
 
-/* FIXTURES (NO SCROLL) */
+/* FIXTURES */
 #f1 table,
 #f2 table {
   display: table;
 }
 
-/* LEAGUE TABLES (SCROLL ENABLED) */
+/* LEAGUE TABLES */
 #t1 table,
 #t2 table {
   display: block;
@@ -160,6 +156,27 @@ tr:hover {
   border-left: 4px solid #d4af37;
   padding-left: 8px;
 }
+
+/* ✅ NEW BUTTONS */
+.btn {
+  display: inline-block;
+  padding: 4px 8px;
+  margin: 2px;
+  border-radius: 6px;
+  font-size: 11px;
+  text-decoration: none;
+  color: white;
+}
+
+.call-btn {
+  background: #1f3c88;
+}
+
+.whatsapp-btn {
+  background: #d4af37;
+  color: black;
+  font-weight: bold;
+}
 </style>
 </head>
 
@@ -213,8 +230,11 @@ function loadTable(sheet, element){
   .then(res => res.text())
   .then(data => {
     const json = JSON.parse(data.substr(47).slice(0,-2));
-    const rows = json.table.rows;
+    let rows = json.table.rows;
     const cols = json.table.cols;
+
+    // ✅ FIX CONTACT HEADERS
+    if(element === "contacts") rows.shift();
 
     let html = "<table><tr>";
 
@@ -253,7 +273,21 @@ function loadTable(sheet, element){
 
       r.c.slice(0, maxCols).forEach(c => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
-        html += `<td>${value}</td>`;
+
+        // ✅ CONTACT BUTTONS ONLY
+        if(element === "contacts" && value && value.toString().startsWith("07")){
+          let clean = value.toString().replace(/\s/g,"");
+
+          html += `<td>
+            ${value}
+            <div style="margin-top:4px;">
+              <a class="btn call-btn" href="tel:${clean}">Call</a>
+              <a class="btn whatsapp-btn" href="https://wa.me/44${clean.substring(1)}">Message</a>
+            </div>
+          </td>`;
+        } else {
+          html += `<td>${value}</td>`;
+        }
       });
 
       html += "</tr>";
@@ -278,6 +312,7 @@ function loadKnockout(sheet, element){
 
     rows.forEach(r => {
       if(!r.c) return;
+      if(!r.c[1]?.v && !r.c[4]?.v) return;
 
       const stage = r.c[0]?.v || "";
       const home = r.c[1]?.v || "";
