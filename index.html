@@ -157,7 +157,7 @@ tr:hover {
   padding-left: 8px;
 }
 
-/* ✅ NEW BUTTONS */
+/* BUTTONS */
 .btn {
   display: inline-block;
   padding: 4px 8px;
@@ -233,8 +233,12 @@ function loadTable(sheet, element){
     let rows = json.table.rows;
     const cols = json.table.cols;
 
-    // ✅ FIX CONTACT HEADERS
-    if(element === "contacts") rows.shift();
+    // ✅ FIX CONTACT HEADERS (ONLY CHANGE)
+    let contactHeaders = null;
+    if(element === "contacts"){
+      contactHeaders = rows[0].c.map(c => c ? c.v : "");
+      rows.shift();
+    }
 
     let html = "<table><tr>";
 
@@ -248,8 +252,16 @@ function loadTable(sheet, element){
       maxCols = cols.length;
     }
 
-    cols.slice(0, maxCols).forEach(c => {
-      html += `<th>${c.label || ""}</th>`;
+    cols.slice(0, maxCols).forEach((c, i) => {
+      let header;
+
+      if(element === "contacts" && contactHeaders){
+        header = contactHeaders[i] || "";
+      } else {
+        header = c.label || "";
+      }
+
+      html += `<th>${header}</th>`;
     });
 
     html += "</tr>";
@@ -274,7 +286,7 @@ function loadTable(sheet, element){
       r.c.slice(0, maxCols).forEach(c => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // ✅ CONTACT BUTTONS ONLY
+        // CONTACT BUTTONS
         if(element === "contacts" && value && value.toString().startsWith("07")){
           let clean = value.toString().replace(/\s/g,"");
 
