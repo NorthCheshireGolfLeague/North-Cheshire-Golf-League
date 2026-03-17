@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NCL League</title>
 
+<!-- Standard icon -->
 <link rel="icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
+
+<!-- ✅ iPhone icon FIX -->
+<link rel="apple-touch-icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
 
 <style>
 html, body {
@@ -62,7 +67,7 @@ nav button:hover {
   display: block;
 }
 
-/* DEFAULT TABLE */
+/* TABLES */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -102,7 +107,7 @@ tr:hover {
   white-space: nowrap;
 }
 
-/* Sticky TEAM column (cells only) */
+/* STICKY TEAM COLUMN */
 #t1 td:nth-child(2),
 #t2 td:nth-child(2) {
   position: sticky;
@@ -112,7 +117,6 @@ tr:hover {
   font-weight: bold;
 }
 
-/* Sticky TEAM header (keep blue) */
 #t1 th:nth-child(2),
 #t2 th:nth-child(2) {
   position: sticky;
@@ -120,20 +124,6 @@ tr:hover {
   background: #1f3c88;
   color: white;
   z-index: 3;
-}
-
-/* Keep header above */
-#t1 th:nth-child(2),
-#t2 th:nth-child(2) {
-  z-index: 3;
-}
-
-/* Bold team names in fixtures */
-#f1 td:nth-child(2),
-#f1 td:nth-child(5),
-#f2 td:nth-child(2),
-#f2 td:nth-child(5) {
-  font-weight: bold;
 }
 
 /* Knockout */
