@@ -120,7 +120,9 @@ td {
 }
 
 .whatsapp-btn {
-  background: #25D366;
+  background: #d4af37;
+  color: black;
+  font-weight: bold;
 }
 
 .btn:hover {
@@ -178,8 +180,10 @@ function loadTable(sheet, element){
 
     let maxCols = sheet.includes("Fixtures") ? 6 : sheet.includes("League Table") ? 16 : cols.length;
 
-    cols.slice(0, maxCols).forEach(c => {
-      html += `<th>${c.label || ""}</th>`;
+    // FIXED HEADERS
+    cols.slice(0, maxCols).forEach((c, i) => {
+      let header = c.label || (i === 0 ? "Round" : i === 1 ? "Team" : "");
+      html += `<th>${header}</th>`;
     });
 
     html += "</tr>";
@@ -192,14 +196,14 @@ function loadTable(sheet, element){
       r.c.slice(0, maxCols).forEach(c => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // CONTACTS PAGE BUTTONS
+        // CONTACT BUTTONS
         if(element === "contacts" && value && value.toString().startsWith("07")){
           let clean = value.toString().replace(/\s/g, "");
 
           html += `<td>
             ${value}<br>
             <a class="btn call-btn" href="tel:${clean}">Call</a>
-            <a class="btn whatsapp-btn" href="https://wa.me/44${clean.substring(1)}">WhatsApp</a>
+            <a class="btn whatsapp-btn" href="https://wa.me/44${clean.substring(1)}">Message</a>
           </td>`;
         } else {
           html += `<td>${value}</td>`;
