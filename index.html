@@ -168,61 +168,14 @@ tr:hover {
   color: white;
 }
 
-.call-btn { background: #1f3c88; }
-.whatsapp-btn { background: #d4af37; color: black; font-weight: bold; }
+.call-btn {
+  background: #1f3c88;
+}
 
-/* NEW */
-.view-btn {
+.whatsapp-btn {
   background: #d4af37;
   color: black;
-  border: none;
-  padding: 5px 8px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 11px;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.7);
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.modal-content {
-  background: white;
-  padding: 15px;
-  width: 95%;
-  max-width: 900px;
-  border-radius: 10px;
-}
-
-.modal-content h2 {
-  background: #1f3c88;
-  color: white;
-  padding: 10px;
-  text-align: center;
-}
-
-.match-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.match-table th {
-  background: #1f3c88;
-  color: white;
-}
-
-.match-table td {
-  padding: 6px;
-  border-bottom: 1px solid #eee;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -241,6 +194,7 @@ tr:hover {
   <button onclick="show('t2')">2nd Team League Table</button>
   <button onclick="show('knockout')">Knockout Finals</button>
   <button onclick="show('rules')">Rules</button>
+  <button onclick="show('honors')">Honors</button>
   <button onclick="show('honors')">Honours</button>
   <button onclick="show('contacts')">Contacts</button>
 </nav>
@@ -253,6 +207,7 @@ tr:hover {
 <div id="knockout" class="page">
   <h3>1st Team</h3>
   <div id="ko1"></div>
+
   <h3>2nd Team</h3>
   <div id="ko2"></div>
 </div>
@@ -261,63 +216,161 @@ tr:hover {
 <div id="honors" class="page"></div>
 <div id="contacts" class="page"></div>
 
-<div id="matchSheetModal" class="modal"></div>
-
 <script>
 const sheetID = "1e3Tl5l6zLqx8Vbk6PX1U13eRyZ2McFd2qcLJhmWGh5g";
-const MATCH_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSqeNyoW2iJp_PnQ6EQJ5dgADDw1NEn0N_U9jBYINane5gQ9HOcK8nGNIJ7XeaK20qEWt5-8sL4jHRj/pub?gid=1122317275&single=true&output=csv";
 
 function show(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-function isUnlocked(dateStr){
-  let d = new Date(dateStr);
-  d.setHours(16,0,0,0);
-  return new Date() >= d;
-}
+function loadTable(sheet, element){
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
 
-async function loadMatch(home, away, date){
-  const modal = document.getElementById("matchSheetModal");
+  fetch(url)
+  .then(res => res.text())
+  .then(data => {
+    const json = JSON.parse(data.substr(47).slice(0,-2));
+    let rows = json.table.rows;
+    const cols = json.table.cols;
 
-  if(!isUnlocked(date)){
-    modal.innerHTML = `<div class="modal-content"><h2>Match Sheet Locked</h2><p>Available from 16:00</p><button onclick="closeModal()">Close</button></div>`;
-    modal.style.display="flex";
-    return;
-  }
-
-  const res = await fetch(MATCH_URL);
-  const text = await res.text();
-  const rows = text.split("\n").map(r=>r.split(","));
-
-  let startIndex=-1;
-
-  for(let i=0;i<rows.length;i++){
-    if(rows[i].join(" ").includes(home)&&rows[i].join(" ").includes(away)){
-      startIndex=i;
-      break;
+    // ✅ FIX CONTACT HEADERS (ONLY CHANGE)
+    let contactHeaders = null;
+    if(element === "contacts"){
+      contactHeaders = rows[0].c.map(c => c ? c.v : "");
+      rows.shift();
     }
-  }
 
-  let matchRows = rows.slice(startIndex, startIndex+10);
+    let html = "<table><tr>";
 
-  let html=`<div class="modal-content"><h2>${home} vs ${away}</h2><table class="match-table">`;
+    let maxCols;
 
-  html += "<tr>"+rows[0].map(c=>`<th>${c}</th>`).join("")+"</tr>";
-
-  matchRows.forEach((r,i)=>{
-    if(i===0 || r[1]){
-      html += "<tr>"+r.map(c=>`<td>${c}</td>`).join("")+"</tr>";
+    if(sheet.includes("Fixtures")){
+      maxCols = 6;
+    } else if(sheet.includes("League Table")){
+      maxCols = 16;
+    } else {
+      maxCols = cols.length;
     }
+
+    cols.slice(0, maxCols).forEach((c, i) => {
+      let header;
+
+      if(element === "contacts" && contactHeaders){
+        header = contactHeaders[i] || "";
+      } else {
+        header = c.label || "";
+      }
+
+      html += `<th>${header}</th>`;
+    });
+
+    html += "</tr>";
+
+    let lastRound = null;
+    let alt = false;
+
+    rows.forEach(r => {
+      if(!r.c) return;
+
+      let round = r.c[0]?.v || "";
+
+      if(round !== lastRound){
+        alt = !alt;
+        lastRound = round;
+      }
+
+      let bg = (sheet.includes("Fixtures") && alt) ? "background:#eef3ff;" : "";
+
+      html += `<tr style="${bg}">`;
+
+      r.c.slice(0, maxCols).forEach(c => {
+        let value = c && (c.f || c.v) ? (c.f || c.v) : "";
+
+        // CONTACT BUTTONS
+        if(element === "contacts" && value && value.toString().startsWith("07")){
+          let clean = value.toString().replace(/\s/g,"");
+
+          html += `<td>
+            ${value}
+            <div style="margin-top:4px;">
+              <a class="btn call-btn" href="tel:${clean}">Call</a>
+              <a class="btn whatsapp-btn" href="https://wa.me/44${clean.substring(1)}">Message</a>
+            </div>
+          </td>`;
+        } else {
+          html += `<td>${value}</td>`;
+        }
+      });
+
+      html += "</tr>";
+    });
+
+    html += "</table>";
+    document.getElementById(element).innerHTML = html;
   });
-
-  html += `</table><button onclick="closeModal()">Close</button></div>`;
-
-  modal.innerHTML=html;
-  modal.style.display="flex";
 }
 
-function closeModal(){
-  document.getElementById("matchSheetModal").style.display="none";
+function loadKnockout(sheet, element){
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
+
+  fetch(url)
+  .then(res => res.text())
+  .then(data => {
+    const json = JSON.parse(data.substr(47).slice(0,-2));
+    const rows = json.table.rows;
+
+    let html = "";
+    let currentStage = "";
+
+    rows.forEach(r => {
+      if(!r.c) return;
+      if(!r.c[1]?.v && !r.c[4]?.v) return;
+
+      const stage = r.c[0]?.v || "";
+      const home = r.c[1]?.v || "";
+      const hs = r.c[2]?.v ?? "";
+      const as = r.c[3]?.v ?? "";
+      const away = r.c[4]?.v || "";
+      const date = r.c[5]?.f || "";
+      const venue = r.c[6]?.v || "";
+
+      if(stage !== currentStage){
+        html += `<div class="stage">${stage}</div>`;
+        currentStage = stage;
+      }
+
+      html += `
+        <div class="match">
+          <div class="teams">
+            <span>${home}</span>
+            <span>${away}</span>
+          </div>
+          <div class="score">${hs} - ${as}</div>
+          <div class="details">${date} | ${venue}</div>
+        </div>
+      `;
+    });
+
+    document.getElementById(element).innerHTML = html;
+  });
 }
+
+// LOAD DATA
+loadTable("1st Team Fixtures","f1");
+loadTable("1st Team League Table (Sorted)","t1");
+loadTable("2nd Team Fixtures","f2");
+loadTable("2nd Team League Table (Sorted)","t2");
+
+loadKnockout("Knockout Finals 1st Team","ko1");
+loadKnockout("Knockout Finals 2nd Team","ko2");
+
+loadTable("Rules","rules");
+loadTable("Honors","honors");
+loadTable("Contacts","contacts");
+
+show("f1");
+</script>
+
+</body>
+</html>
