@@ -168,17 +168,10 @@ tr:hover {
   color: white;
 }
 
-.call-btn {
-  background: #1f3c88;
-}
+.call-btn { background: #1f3c88; }
+.whatsapp-btn { background: #d4af37; color: black; font-weight: bold; }
 
-.whatsapp-btn {
-  background: #d4af37;
-  color: black;
-  font-weight: bold;
-}
-
-/* MATCH BUTTON */
+/* NEW */
 .view-btn {
   background: #d4af37;
   color: black;
@@ -189,7 +182,6 @@ tr:hover {
   font-size: 11px;
 }
 
-/* MODAL */
 .modal {
   display: none;
   position: fixed;
@@ -287,54 +279,45 @@ function isUnlocked(dateStr){
 }
 
 async function loadMatch(home, away, date){
-
   const modal = document.getElementById("matchSheetModal");
 
   if(!isUnlocked(date)){
     modal.innerHTML = `<div class="modal-content"><h2>Match Sheet Locked</h2><p>Available from 16:00</p><button onclick="closeModal()">Close</button></div>`;
-    modal.style.display = "flex";
+    modal.style.display="flex";
     return;
   }
 
   const res = await fetch(MATCH_URL);
   const text = await res.text();
-  const rows = text.split("\n").map(r => r.split(","));
+  const rows = text.split("\n").map(r=>r.split(","));
 
-  let startIndex = -1;
+  let startIndex=-1;
 
   for(let i=0;i<rows.length;i++){
-    if(rows[i].join(" ").includes(home) && rows[i].join(" ").includes(away)){
-      startIndex = i;
+    if(rows[i].join(" ").includes(home)&&rows[i].join(" ").includes(away)){
+      startIndex=i;
       break;
     }
   }
 
-  if(startIndex === -1){
-    modal.innerHTML = `<div class="modal-content"><h2>No Match Found</h2></div>`;
-    modal.style.display = "flex";
-    return;
-  }
+  let matchRows = rows.slice(startIndex, startIndex+10);
 
-  let matchRows = rows.slice(startIndex, startIndex + 10);
+  let html=`<div class="modal-content"><h2>${home} vs ${away}</h2><table class="match-table">`;
 
-  let html = `<div class="modal-content"><h2>${home} vs ${away}</h2><table class="match-table">`;
-
-  html += "<tr>" + rows[0].map(c => `<th>${c}</th>`).join("") + "</tr>";
+  html += "<tr>"+rows[0].map(c=>`<th>${c}</th>`).join("")+"</tr>";
 
   matchRows.forEach((r,i)=>{
     if(i===0 || r[1]){
-      html += "<tr>";
-      r.forEach(c => html += `<td>${c}</td>`);
-      html += "</tr>";
+      html += "<tr>"+r.map(c=>`<td>${c}</td>`).join("")+"</tr>";
     }
   });
 
   html += `</table><button onclick="closeModal()">Close</button></div>`;
 
-  modal.innerHTML = html;
-  modal.style.display = "flex";
+  modal.innerHTML=html;
+  modal.style.display="flex";
 }
 
 function closeModal(){
-  document.getElementById("matchSheetModal").style.display = "none";
+  document.getElementById("matchSheetModal").style.display="none";
 }
