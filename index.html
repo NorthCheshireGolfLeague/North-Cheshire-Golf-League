@@ -301,15 +301,37 @@ async function loadMatch(home, away, date){
   const text = await res.text();
   const rows = text.split("\n").map(r=>r.split(","));
 
-  let matchRows = rows.filter(r => r.join(" ").includes(home) && r.join(" ").includes(away));
+const data = rows.slice(1);
 
-  let html = `<div class="modal-content"><h2>${home} vs ${away}</h2><table class="match-table">`;
+let matchRows = data.filter(r => {
+  return r[7] === home && r[8] === away;
+});
 
-  html += "<tr>" + rows[0].map(c => `<th>${c}</th>`).join("") + "</tr>";
+let html = `<div class="modal-content"><h2>${home} vs ${away}</h2><table class="match-table">`;
 
-  matchRows.forEach(r=>{
-    html += "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>";
-  });
+html += `
+<tr>
+  <th>Home Player</th>
+  <th>Home Index</th>
+  <th>Home Shots</th>
+  <th>Away Player</th>
+  <th>Away Index</th>
+  <th>Away Shots</th>
+  <th>Shots Given</th>
+</tr>
+`;
+
+matchRows.forEach(r=>{
+  html += `<tr>
+    <td>${r[0]}</td>
+    <td>${r[1]}</td>
+    <td>${r[2]}</td>
+    <td>${r[3]}</td>
+    <td>${r[4]}</td>
+    <td>${r[5]}</td>
+    <td>${r[6]}</td>
+  </tr>`;
+});
 
   html += `</table><button onclick="closeModal()">Close</button></div>`;
 
