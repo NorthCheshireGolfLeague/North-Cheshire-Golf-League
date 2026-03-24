@@ -320,16 +320,8 @@ async function loadMatch(fixtureID){
   const away = firstRow[9] || "Away";
   const date = fixtureID.split("_")[0];
 
-  if(!isUnlocked(date)){
-    modal.innerHTML = `
-      <div class="modal-content">
-        <h2>Match Sheet Locked</h2>
-        <p>Available from 16:00</p>
-        <button onclick="closeModal()">Close</button>
-      </div>`;
-    modal.style.display = "flex";
-    return;
-  }
+// TEMP: unlock for testing
+// if(!isUnlocked(date)){ ... }
 
   let html = `<div class="modal-content">
                 <h2>${home} vs ${away}</h2>
