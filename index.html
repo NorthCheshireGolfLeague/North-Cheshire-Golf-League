@@ -304,7 +304,21 @@ async function loadMatch(home, away, date){
 const data = rows.slice(1);
 
 let matchRows = data.filter(r => {
-  return r[7] === home && r[8] === away;
+
+  const isFirstTeam = home.includes("1st") || away.includes("1st");
+
+  if(isFirstTeam){
+    return r[7].includes(home.split(" ")[0]) &&
+           r[8].includes(away.split(" ")[0]) &&
+           r[7].includes("1st") &&
+           r[8].includes("1st");
+  } else {
+    return r[7].includes(home.split(" ")[0]) &&
+           r[8].includes(away.split(" ")[0]) &&
+           r[7].includes("2nd") &&
+           r[8].includes("2nd");
+  }
+
 });
 
 let html = `<div class="modal-content"><h2>${home} vs ${away}</h2><table class="match-table">`;
