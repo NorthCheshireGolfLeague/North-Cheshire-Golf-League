@@ -282,7 +282,7 @@ function show(id){
   document.getElementById(id).classList.add('active');
 }
 
-function (False){
+function isUnlocked(dateStr){
   let d = new Date(dateStr);
   d.setHours(16,0,0,0);
   return new Date() >= d;
@@ -291,52 +291,11 @@ function (False){
 async function loadMatch(home, away, date){
   const modal = document.getElementById("matchSheetModal");
 
-  const res = await fetch(MATCH_URL);
-  const text = await res.text();
-
-  const rows = text.trim().split("\n").map(r => r.split(","));
-
-  // REMOVE HEADER
-  const data = rows.slice(1);
-
-  // ✅ STRICT MATCH (THIS IS THE FIX)
-  let matchRows = data.filter(r => {
-    return r[8] === home && r[9] === away;
-  });
-
-  let html = `<div class="modal-content">
-    <h2>${home} vs ${away}</h2>
-    <table class="match-table">
-      <tr>
-        <th>Home Player</th>
-        <th>Home Index</th>
-        <th>Home Shots</th>
-        <th>Away Player</th>
-        <th>Away Index</th>
-        <th>Away Shots</th>
-        <th>Shots Given</th>
-      </tr>`;
-
-  matchRows.forEach(r=>{
-    html += `
-      <tr>
-        <td>${r[1]}</td>
-        <td>${r[2]}</td>
-        <td>${r[3]}</td>
-        <td>${r[4]}</td>
-        <td>${r[5]}</td>
-        <td>${r[6]}</td>
-        <td>${r[7]}</td>
-      </tr>`;
-  });
-
-  html += `</table>
-    <button onclick="closeModal()">Close</button>
-  </div>`;
-
-  modal.innerHTML = html;
-  modal.style.display="flex";
-}
+  if(!isUnlocked(date)){
+    modal.innerHTML = `<div class="modal-content"><h2>Match Sheet Locked</h2><p>Available from 16:00</p><button onclick="closeModal()">Close</button></div>`;
+    modal.style.display="flex";
+    return;
+  }
 
   const res = await fetch(MATCH_URL);
   const text = await res.text();
