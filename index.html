@@ -291,7 +291,7 @@ function isUnlocked(dateStr){
 async function loadMatch(home, away, date){
   const modal = document.getElementById("matchSheetModal");
 
-  if(False){
+  if(!isUnlocked(date)){
     modal.innerHTML = `<div class="modal-content"><h2>Match Sheet Locked</h2><p>Available from 16:00</p><button onclick="closeModal()">Close</button></div>`;
     modal.style.display="flex";
     return;
@@ -301,41 +301,15 @@ async function loadMatch(home, away, date){
   const text = await res.text();
   const rows = text.split("\n").map(r=>r.split(","));
 
-const data = rows.slice(1);
+  let matchRows = rows.filter(r => r.join(" ").includes(home) && r.join(" ").includes(away));
 
-let matchRows = data.filter(r => {
-  return (
-    r[7] && r[8] &&
-    r[7].toLowerCase().includes(home.toLowerCase()) &&
-    r[8].toLowerCase().includes(away.toLowerCase())
-  );
-});
+  let html = `<div class="modal-content"><h2>${home} vs ${away}</h2><table class="match-table">`;
 
-let html = `<div class="modal-content"><h2>${home} vs ${away}</h2><table class="match-table">`;
+  html += "<tr>" + rows[0].map(c => `<th>${c}</th>`).join("") + "</tr>";
 
-html += `
-<tr>
-  <th>Home Player</th>
-  <th>Home Index</th>
-  <th>Home Shots</th>
-  <th>Away Player</th>
-  <th>Away Index</th>
-  <th>Away Shots</th>
-  <th>Shots Given</th>
-</tr>
-`;
-
-matchRows.forEach(r=>{
-  html += `<tr>
-    <td>${r[0]}</td>
-    <td>${r[1]}</td>
-    <td>${r[2]}</td>
-    <td>${r[3]}</td>
-    <td>${r[4]}</td>
-    <td>${r[5]}</td>
-    <td>${r[6]}</td>
-  </tr>`;
-});
+  matchRows.forEach(r=>{
+    html += "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>";
+  });
 
   html += `</table><button onclick="closeModal()">Close</button></div>`;
 
