@@ -289,15 +289,38 @@ function isUnlocked(dateStr){
   return new Date() >= d;
 }
 
-// ✅ UPDATED FUNCTION
-async function loadMatch(fixture){
+// ✅ NOW USES FIXTURE ID
+async function loadMatch(fixtureID){
   const modal = document.getElementById("matchSheetModal");
 
-  const [datePart, teamsPart] = fixture.split(" - ");
-  const [home, away] = teamsPart.split(" vs ");
-  const date = datePart;
+  const res = await fetch(MATCH_URL);
+  const text = await res.text();
+  const rows = text.split("\n").map(r => r.split(","));
 
-  if(False){
+  // get header
+  const headers = rows[0];
+
+  // find rows matching fixtureID (column A)
+  let matchRows = rows.filter(r => r[0] === fixtureID);
+
+  if(matchRows.length === 0){
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h2>No Data Found</h2>
+        <p>No match sheet submitted yet.</p>
+        <button onclick="closeModal()">Close</button>
+      </div>`;
+    modal.style.display = "flex";
+    return;
+  }
+
+  // get teams + date from first row
+  const firstRow = matchRows[0];
+  const home = firstRow[8] || "Home";
+  const away = firstRow[9] || "Away";
+  const date = fixtureID.split("_")[0];
+
+  if(!isUnlocked(date)){
     modal.innerHTML = `
       <div class="modal-content">
         <h2>Match Sheet Locked</h2>
@@ -308,19 +331,14 @@ async function loadMatch(fixture){
     return;
   }
 
-  const res = await fetch(MATCH_URL);
-  const text = await res.text();
-  const rows = text.split("\n").map(r => r.split(","));
-
-  // ✅ FIXED FILTER (fixture-based)
-  let matchRows = rows.filter(r => r.join(" ").includes(fixture));
-
   let html = `<div class="modal-content">
                 <h2>${home} vs ${away}</h2>
                 <table class="match-table">`;
 
-  html += "<tr>" + rows[0].map(c => `<th>${c}</th>`).join("") + "</tr>";
+  // headers
+  html += "<tr>" + headers.map(c => `<th>${c}</th>`).join("") + "</tr>";
 
+  // rows
   matchRows.forEach(r => {
     html += "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>";
   });
@@ -334,7 +352,7 @@ async function loadMatch(fixture){
 }
 
 function closeModal(){
-  document.getElementById("matchSheetModal").style.display = "none";
+  document.getElementById("matchSheetModal").style.display="none";
 }
 
 function loadTable(sheet, element){
@@ -346,12 +364,6 @@ function loadTable(sheet, element){
     const json = JSON.parse(data.substr(47).slice(0,-2));
     let rows = json.table.rows;
     const cols = json.table.cols;
-
-    let contactHeaders = null;
-    if(element === "contacts"){
-      contactHeaders = rows[0].c.map(c => c ? c.v : "");
-      rows.shift();
-    }
 
     let html = "<table><tr>";
 
@@ -365,9 +377,8 @@ function loadTable(sheet, element){
       maxCols = cols.length;
     }
 
-    cols.slice(0, maxCols).forEach((c, i) => {
-      let header = (element === "contacts" && contactHeaders) ? contactHeaders[i] : c.label;
-      html += `<th>${header}</th>`;
+    cols.slice(0, maxCols).forEach(c => {
+      html += `<th>${c.label}</th>`;
     });
 
     html += "</tr>";
@@ -380,25 +391,12 @@ function loadTable(sheet, element){
       r.c.slice(0, maxCols).forEach((c,i) => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // ✅ UPDATED BUTTON WITH FIXTURE
+        // ✅ BUTTON NOW USES FIXTURE ID (COLUMN 6 = G)
         if(sheet.includes("Fixtures") && i === 5){
-          const home = r.c[1].v || "";
-          const away = r.c[4].v || "";
-          const date = r.c[5].v || "";
-
-          const fixture = `${date} - ${home} vs ${away}`;
+          const fixtureID = r.c[6] ? r.c[6].v : "";
 
           html += `<td>${value}<br>
-            <button class="view-btn" onclick="loadMatch('${fixture}')">View</button>
-          </td>`;
-        }
-
-        else if(element === "contacts" && value && value.toString().startsWith("07")){
-          let clean = value.toString().replace(/\s/g,'');
-
-          html += `<td>${value}<br>
-            <a class="btn call-btn" href="tel:${clean}">Call</a>
-            <a class="btn whatsapp-btn" href="https://wa.me/44${clean.substring(1)}">Message</a>
+            <button class="view-btn" onclick="loadMatch('${fixtureID}')">View</button>
           </td>`;
         }
 
@@ -429,15 +427,14 @@ function loadKnockout(sheet, element){
 
     rows.forEach(r => {
       if(!r.c) return;
-      if(!r.c[1].v && !r.c[4].v) return;
 
-      const stage = r.c[0].v || "";
-      const home = r.c[1].v || "";
-      const hs = r.c[2].v || "";
-      const as = r.c[3].v || "";
-      const away = r.c[4].v || "";
-      const date = r.c[5].f || "";
-      const venue = r.c[6].v || "";
+      const stage = r.c[0]?.v || "";
+      const home = r.c[1]?.v || "";
+      const hs = r.c[2]?.v || "";
+      const as = r.c[3]?.v || "";
+      const away = r.c[4]?.v || "";
+      const date = r.c[5]?.f || "";
+      const venue = r.c[6]?.v || "";
 
       if(stage !== currentStage){
         html += `<div class="stage">${stage}</div>`;
