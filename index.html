@@ -324,7 +324,7 @@ function loadMatchSheet(sheetName){
       html += "<tr>" + cols.slice(0,7).map(c => `<th>${c.label}</th>`).join("") + "</tr>";
 
       // ✅ Get only player rows
-      let playerRows = rows.slice(1).filter(r => r.c && r.c[0] && r.c[0].v);
+      let playerRows = rows.filter(r => r.c && r.c[0] && r.c[0].v);
 
       // ✅ Render correct number of rows automatically
       playerRows.forEach(r => {
