@@ -284,7 +284,7 @@ function show(id){
   document.getElementById(id).classList.add('active');
 }
 
-// ✅ MATCH SHEET LOADER (FINAL WORKING VERSION)
+// ✅ MATCH SHEET LOADER
 function loadMatchSheet(sheetName){
   const modal = document.getElementById("matchSheetModal");
 
@@ -306,20 +306,19 @@ function loadMatchSheet(sheetName){
         return;
       }
 
-      // ✅ FIND FIXTURE TEXT (ROBUST SEARCH)
+      // ✅ FIND FIXTURE TITLE (FINAL FIXED VERSION)
       let title = sheetName;
 
       for(let i = 0; i < 5; i++){
         if(rows[i] && rows[i].c){
           for(let cell of rows[i].c){
             if(cell && cell.v && typeof cell.v === "string" && cell.v.toLowerCase().includes("vs")){
-  title = cell.v
-    .split(" - ").pop()
-    .replace(" 1st Team","")
-    .replace(" 2nd Team","")
-    .trim();
-  break;
-}
+              title = cell.v
+                .split(" - ").pop()
+                .replace(" 1st Team","")
+                .replace(" 2nd Team","")
+                .trim();
+              break;
             }
           }
         }
@@ -332,7 +331,7 @@ function loadMatchSheet(sheetName){
       // ✅ HEADERS (A–G)
       html += "<tr>" + cols.slice(0,7).map(c => `<th>${c.label}</th>`).join("") + "</tr>";
 
-      // ✅ PLAYER ROWS (ALL VALID)
+      // ✅ PLAYER ROWS
       let playerRows = rows.filter(r => r.c && r.c[0] && r.c[0].v);
 
       playerRows.forEach(r => {
@@ -398,7 +397,7 @@ function loadTable(sheet, element){
       r.c.slice(0, maxCols).forEach((c,i) => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // ✅ VIEW BUTTON → MATCH SHEETS
+        // ✅ VIEW BUTTON
         if(sheet.includes("Fixtures") && i === 5){
           const matchNumber = index + 1;
 
@@ -479,7 +478,7 @@ function loadKnockout(sheet, element){
   });
 }
 
-// LOAD EVERYTHING
+// LOAD DATA
 loadTable("1st Team Fixtures","f1");
 loadTable("1st Team League Table (Sorted)","t1");
 loadTable("2nd Team Fixtures","f2");
