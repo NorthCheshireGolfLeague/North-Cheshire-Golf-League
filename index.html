@@ -273,7 +273,7 @@ tr:hover {
 <!-- NEW MODAL -->
 <div id="matchSheetModal" class="modal"></div>
 
- <script>
+<script>
 
 // ✅ TWO SHEETS
 const MAIN_SHEET_ID = "1e3Tl5l6zLqx8Vbk6PX1U13eRyZ2McFd2qcLJhmWGh5g";
@@ -306,20 +306,17 @@ function loadMatchSheet(sheetName){
         return;
       }
 
-      // ✅ FIND FIXTURE TITLE ANYWHERE IN SHEET
+      // ✅ GET FIXTURE TITLE FROM COLUMN J (INDEX 9)
       let title = sheetName;
 
-      for(let r of rows){
-        if(r.c && r.c[0] && typeof r.c[0].v === "string"){
-          let text = r.c[0].v;
+      if(rows[0] && rows[0].c && rows[0].c[9]){
+        let text = rows[0].c[9].v;
 
-          if(text.includes(" vs ")){
-            title = text
-              .split(" - ")[1]
-              .replace(" 1st Team","")
-              .replace(" 2nd Team","");
-            break;
-          }
+        if(text && text.includes(" vs ")){
+          title = text
+            .split(" - ")[1]
+            .replace(" 1st Team","")
+            .replace(" 2nd Team","");
         }
       }
 
@@ -330,10 +327,9 @@ function loadMatchSheet(sheetName){
       // ✅ HEADERS (A–G)
       html += "<tr>" + cols.slice(0,7).map(c => `<th>${c.label}</th>`).join("") + "</tr>";
 
-      // ✅ GET PLAYER ROWS (NO SKIPPING FIRST PLAYER)
+      // ✅ PLAYER ROWS (ALL VALID ROWS)
       let playerRows = rows.filter(r => r.c && r.c[0] && r.c[0].v);
 
-      // ✅ RENDER ROWS
       playerRows.forEach(r => {
         html += "<tr>" + r.c.slice(0,7).map(c =>
           `<td>${c ? (c.f || c.v || "") : ""}</td>`
@@ -493,7 +489,7 @@ loadTable("Contacts","contacts");
 
 show("f1");
 
-</script>
+</script>  
   
 </body>
 </html>
