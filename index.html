@@ -293,7 +293,8 @@ function loadMatchSheet(sheetName){
   const modal = document.getElementById("matchSheetModal");
 
   const url = `https://docs.google.com/spreadsheets/d/e/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
-    fetch(url)
+   
+  fetch(url)
     .then(res => res.text())
     .then(data => {
       const json = JSON.parse(data.substr(47).slice(0,-2));
