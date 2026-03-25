@@ -313,12 +313,13 @@ function loadMatchSheet(sheetName){
         if(rows[i] && rows[i].c){
           for(let cell of rows[i].c){
             if(cell && cell.v && typeof cell.v === "string" && cell.v.toLowerCase().includes("vs")){
-              title = cell.v
-  .split(" - ").pop()
-  .replace(" 1st Team","")
-  .replace(" 2nd Team","")
-  .trim();
-              break;
+  title = cell.v
+    .split(" - ").pop()
+    .replace(" 1st Team","")
+    .replace(" 2nd Team","")
+    .trim();
+  break;
+}
             }
           }
         }
