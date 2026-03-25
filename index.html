@@ -314,9 +314,10 @@ function loadMatchSheet(sheetName){
           for(let cell of rows[i].c){
             if(cell && cell.v && typeof cell.v === "string" && cell.v.includes(" vs ")){
               title = cell.v
-                .split(" - ")[1]
-                .replace(" 1st Team","")
-                .replace(" 2nd Team","");
+             title = cell.v
+  .replace(" 1st Team","")
+  .replace(" 2nd Team","")
+  .trim();
               break;
             }
           }
