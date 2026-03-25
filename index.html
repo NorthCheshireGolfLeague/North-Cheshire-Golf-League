@@ -284,7 +284,7 @@ function show(id){
   document.getElementById(id).classList.add('active');
 }
 
-// ✅ MATCH SHEET LOADER (uses MATCH sheet)
+// ✅ MATCH SHEET LOADER (CLEAN VERSION)
 function loadMatchSheet(sheetName){
   const modal = document.getElementById("matchSheetModal");
 
@@ -297,15 +297,34 @@ function loadMatchSheet(sheetName){
       const rows = json.table.rows;
       const cols = json.table.cols;
 
+      if(!rows || rows.length === 0){
+        modal.innerHTML = `<div class="modal-content">
+          <h2>No Data Found</h2>
+          <button onclick="closeModal()">Close</button>
+        </div>`;
+        modal.style.display="flex";
+        return;
+      }
+
+      // ✅ GET TEAM NAMES
+      const firstRow = rows[0].c;
+      const homeTeam = firstRow[8] ? firstRow[8].v : "Home";
+      const awayTeam = firstRow[9] ? firstRow[9].v : "Away";
+
       let html = `<div class="modal-content">
-                    <h2>${sheetName}</h2>
+                    <h2>${homeTeam} vs ${awayTeam}</h2>
                     <table class="match-table">`;
 
-      html += "<tr>" + cols.map(c => `<th>${c.label}</th>`).join("") + "</tr>";
+      // headers (only relevant columns)
+      html += "<tr>" + cols.slice(1,8).map(c => `<th>${c.label}</th>`).join("") + "</tr>";
 
-      rows.forEach(r => {
+      // rows (REMOVE bottom junk rows)
+      rows.slice(0, -2).forEach(r => {
         if(!r.c) return;
-        html += "<tr>" + r.c.map(c => `<td>${c ? (c.f || c.v || "") : ""}</td>`).join("") + "</tr>";
+
+        html += "<tr>" + r.c.slice(1,8).map(c =>
+          `<td>${c ? (c.f || c.v || "") : ""}</td>`
+        ).join("") + "</tr>";
       });
 
       html += `</table>
@@ -321,7 +340,7 @@ function closeModal(){
   document.getElementById("matchSheetModal").style.display="none";
 }
 
-// ✅ MAIN TABLE LOADER (uses MAIN sheet)
+// ✅ MAIN TABLE LOADER
 function loadTable(sheet, element){
   const url = `https://docs.google.com/spreadsheets/d/${MAIN_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
 
@@ -365,7 +384,7 @@ function loadTable(sheet, element){
       r.c.slice(0, maxCols).forEach((c,i) => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // ✅ FIXTURE BUTTON → MATCH SHEET
+        // ✅ VIEW BUTTON → MATCH SHEETS
         if(sheet.includes("Fixtures") && i === 5){
           const matchNumber = index + 1;
 
@@ -401,7 +420,7 @@ function loadTable(sheet, element){
   });
 }
 
-// ✅ KNOCKOUT (also MAIN sheet)
+// ✅ KNOCKOUT
 function loadKnockout(sheet, element){
   const url = `https://docs.google.com/spreadsheets/d/${MAIN_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
 
