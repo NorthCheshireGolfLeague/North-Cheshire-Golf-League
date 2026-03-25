@@ -289,58 +289,36 @@ function isUnlocked(dateStr){
   return new Date() >= d;
 }
 
-// ✅ NOW USES FIXTURE ID
-async function loadMatch(fixtureID){
+function loadMatch(sheetName){
   const modal = document.getElementById("matchSheetModal");
 
-  const res = await fetch(MATCH_URL);
-  const text = await res.text();
-  const rows = text.split("\n").map(r => r.split(","));
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
 
-  // get header
-  const headers = rows[0];
+  fetch(url)
+    .then(res => res.text())
+    .then(data => {
+      const json = JSON.parse(data.substr(47).slice(0,-2));
+      const rows = json.table.rows;
+      const cols = json.table.cols;
 
-  // find rows matching fixtureID (column A)
-  let matchRows = rows.filter(r => r[0] === fixtureID);
+      let html = `<div class="modal-content">
+                    <h2>${sheetName}</h2>
+                    <table class="match-table">`;
 
-  if(matchRows.length === 0){
-    modal.innerHTML = `
-      <div class="modal-content">
-        <h2>No Data Found</h2>
-        <p>No match sheet submitted yet.</p>
-        <button onclick="closeModal()">Close</button>
-      </div>`;
-    modal.style.display = "flex";
-    return;
-  }
+      html += "<tr>" + cols.map(c => `<th>${c.label}</th>`).join("") + "</tr>";
 
-  // get teams + date from first row
-  const firstRow = matchRows[0];
-  const home = firstRow[8] || "Home";
-  const away = firstRow[9] || "Away";
-  const date = fixtureID.split("_")[0];
+      rows.forEach(r => {
+        if(!r.c) return;
+        html += "<tr>" + r.c.map(c => `<td>${c ? (c.f || c.v || "") : ""}</td>`).join("") + "</tr>";
+      });
 
-// TEMP: unlock for testing
-// if(!isUnlocked(date)){ ... }
+      html += `</table>
+               <button onclick="closeModal()">Close</button>
+               </div>`;
 
-  let html = `<div class="modal-content">
-                <h2>${home} vs ${away}</h2>
-                <table class="match-table">`;
-
-  // headers
-  html += "<tr>" + headers.map(c => `<th>${c}</th>`).join("") + "</tr>";
-
-  // rows
-  matchRows.forEach(r => {
-    html += "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>";
-  });
-
-  html += `</table>
-           <button onclick="closeModal()">Close</button>
-           </div>`;
-
-  modal.innerHTML = html;
-  modal.style.display = "flex";
+      modal.innerHTML = html;
+      modal.style.display = "flex";
+    });
 }
 
 function closeModal(){
@@ -382,14 +360,13 @@ function loadTable(sheet, element){
 
       r.c.slice(0, maxCols).forEach((c,i) => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
+        
+const matchNumber = index + 1;
 
-        // ✅ BUTTON NOW USES FIXTURE ID (COLUMN 6 = G)
-        if(sheet.includes("Fixtures") && i === 5){
-          const fixtureID = r.c[6] ? r.c[6].v : "";
-
-          html += `<td>${value}<br>
-            <button class="view-btn" onclick="loadMatch('${fixtureID}')">View</button>
-          </td>`;
+html += `<td>${value}<br>
+  <button class="view-btn" onclick="loadMatch('Match ${matchNumber} 1st Team')">View</button>
+</td>`;
+       
         }
 
         else{
