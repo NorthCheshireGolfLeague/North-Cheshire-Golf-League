@@ -273,19 +273,22 @@ tr:hover {
 <!-- NEW MODAL -->
 <div id="matchSheetModal" class="modal"></div>
 
-  <script>
-const sheetID = "1jj51_00IUJZE_4SGGeLgE8taPplg6U9vtMbH8YjuWO8";
+<script>
+
+// ✅ TWO SHEETS
+const MAIN_SHEET_ID = "1e3Tl5l6zLqx8Vbk6PX1U13eRyZ2McFd2qcLJhmWGh5g";
+const MATCH_SHEET_ID = "1jj51_00IUJZE_4SGGeLgE8taPplg6U9vtMbH8YjuWO8";
 
 function show(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// ✅ LOAD MATCH SHEET (CORRECT VERSION)
+// ✅ MATCH SHEET LOADER (uses MATCH sheet)
 function loadMatchSheet(sheetName){
   const modal = document.getElementById("matchSheetModal");
 
-  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+  const url = `https://docs.google.com/spreadsheets/d/${MATCH_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
 
   fetch(url)
     .then(res => res.text())
@@ -293,15 +296,6 @@ function loadMatchSheet(sheetName){
       const json = JSON.parse(data.substr(47).slice(0,-2));
       const rows = json.table.rows;
       const cols = json.table.cols;
-
-      if(!rows){
-        modal.innerHTML = `<div class="modal-content">
-          <h2>No Data Found</h2>
-          <button onclick="closeModal()">Close</button>
-        </div>`;
-        modal.style.display="flex";
-        return;
-      }
 
       let html = `<div class="modal-content">
                     <h2>${sheetName}</h2>
@@ -327,8 +321,9 @@ function closeModal(){
   document.getElementById("matchSheetModal").style.display="none";
 }
 
+// ✅ MAIN TABLE LOADER (uses MAIN sheet)
 function loadTable(sheet, element){
-  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
+  const url = `https://docs.google.com/spreadsheets/d/${MAIN_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
 
   fetch(url)
   .then(res => res.text())
@@ -370,7 +365,7 @@ function loadTable(sheet, element){
       r.c.slice(0, maxCols).forEach((c,i) => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // ✅ FIXTURE BUTTON → MATCH SHEETS
+        // ✅ FIXTURE BUTTON → MATCH SHEET
         if(sheet.includes("Fixtures") && i === 5){
           const matchNumber = index + 1;
 
@@ -406,8 +401,9 @@ function loadTable(sheet, element){
   });
 }
 
+// ✅ KNOCKOUT (also MAIN sheet)
 function loadKnockout(sheet, element){
-  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
+  const url = `https://docs.google.com/spreadsheets/d/${MAIN_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
 
   fetch(url)
   .then(res => res.text())
@@ -420,7 +416,6 @@ function loadKnockout(sheet, element){
 
     rows.forEach(r => {
       if(!r.c) return;
-      if(!r.c[1]?.v && !r.c[4]?.v) return;
 
       const stage = r.c[0]?.v || "";
       const home = r.c[1]?.v || "";
@@ -451,7 +446,7 @@ function loadKnockout(sheet, element){
   });
 }
 
-// LOAD DATA
+// LOAD EVERYTHING
 loadTable("1st Team Fixtures","f1");
 loadTable("1st Team League Table (Sorted)","t1");
 loadTable("2nd Team Fixtures","f2");
@@ -465,8 +460,8 @@ loadTable("Honors","honors");
 loadTable("Contacts","contacts");
 
 show("f1");
-</script>
-  
+
+</script>    
  
 </body>
 </html>
