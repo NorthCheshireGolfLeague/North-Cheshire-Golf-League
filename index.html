@@ -274,24 +274,18 @@ tr:hover {
 <div id="matchSheetModal" class="modal"></div>
 
   <script>
-const sheetID = "2PACX-1vSqeNyoW2iJp_PnQ6EQJ5dgADDw1NEn0N_U9jBYINane5gQ9HOcK8nGNIJ7XeaK20qEWt5-8sL4jHRj";
+const sheetID = "1jj51_00IUJZE_4SGGeLgE8taPplg6U9vtMbH8YjuWO8";
 
 function show(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-function isUnlocked(dateStr){
-  let d = new Date(dateStr);
-  d.setHours(16,0,0,0);
-  return new Date() >= d;
-}
-
-// ✅ NEW MATCH SHEET LOADER (USES YOUR MATCH TABS)
+// ✅ LOAD MATCH SHEET (CORRECT VERSION)
 function loadMatchSheet(sheetName){
   const modal = document.getElementById("matchSheetModal");
 
-  const url = `https://docs.google.com/spreadsheets/d/e/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
 
   fetch(url)
     .then(res => res.text())
@@ -299,6 +293,15 @@ function loadMatchSheet(sheetName){
       const json = JSON.parse(data.substr(47).slice(0,-2));
       const rows = json.table.rows;
       const cols = json.table.cols;
+
+      if(!rows){
+        modal.innerHTML = `<div class="modal-content">
+          <h2>No Data Found</h2>
+          <button onclick="closeModal()">Close</button>
+        </div>`;
+        modal.style.display="flex";
+        return;
+      }
 
       let html = `<div class="modal-content">
                     <h2>${sheetName}</h2>
@@ -367,7 +370,7 @@ function loadTable(sheet, element){
       r.c.slice(0, maxCols).forEach((c,i) => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // ✅ FIXTURE BUTTON NOW LOADS MATCH SHEETS
+        // ✅ FIXTURE BUTTON → MATCH SHEETS
         if(sheet.includes("Fixtures") && i === 5){
           const matchNumber = index + 1;
 
@@ -463,5 +466,7 @@ loadTable("Contacts","contacts");
 
 show("f1");
 </script>
+  
+ 
 </body>
 </html>
