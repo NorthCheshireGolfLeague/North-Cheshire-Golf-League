@@ -284,7 +284,7 @@ function show(id){
   document.getElementById(id).classList.add('active');
 }
 
-// ✅ MATCH SHEET LOADER (FINAL VERSION)
+// ✅ MATCH SHEET LOADER (FINAL WORKING VERSION)
 function loadMatchSheet(sheetName){
   const modal = document.getElementById("matchSheetModal");
 
@@ -306,17 +306,20 @@ function loadMatchSheet(sheetName){
         return;
       }
 
-      // ✅ GET FIXTURE TITLE FROM COLUMN J (INDEX 9)
+      // ✅ FIND FIXTURE TEXT (ROBUST SEARCH)
       let title = sheetName;
 
-      if(rows[0] && rows[0].c && rows[0].c[9]){
-        let text = rows[0].c[9].v;
-
-        if(text && text.includes(" vs ")){
-          title = text
-            .split(" - ")[1]
-            .replace(" 1st Team","")
-            .replace(" 2nd Team","");
+      for(let i = 0; i < 5; i++){
+        if(rows[i] && rows[i].c){
+          for(let cell of rows[i].c){
+            if(cell && cell.v && typeof cell.v === "string" && cell.v.includes(" vs ")){
+              title = cell.v
+                .split(" - ")[1]
+                .replace(" 1st Team","")
+                .replace(" 2nd Team","");
+              break;
+            }
+          }
         }
       }
 
@@ -327,7 +330,7 @@ function loadMatchSheet(sheetName){
       // ✅ HEADERS (A–G)
       html += "<tr>" + cols.slice(0,7).map(c => `<th>${c.label}</th>`).join("") + "</tr>";
 
-      // ✅ PLAYER ROWS (ALL VALID ROWS)
+      // ✅ PLAYER ROWS (ALL VALID)
       let playerRows = rows.filter(r => r.c && r.c[0] && r.c[0].v);
 
       playerRows.forEach(r => {
@@ -490,6 +493,6 @@ loadTable("Contacts","contacts");
 show("f1");
 
 </script>  
-  
+
 </body>
 </html>
