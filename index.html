@@ -284,8 +284,8 @@ function show(id){
   document.getElementById(id).classList.add('active');
 }
 
-// ✅ MATCH SHEET LOADER
-function loadMatchSheet(sheetName){
+// ✅ MATCH SHEET LOADER (FINAL FIXED)
+function loadMatchSheet(sheetName, home, away){
   const modal = document.getElementById("matchSheetModal");
 
   const url = `https://docs.google.com/spreadsheets/d/${MATCH_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
@@ -306,23 +306,8 @@ function loadMatchSheet(sheetName){
         return;
       }
 
-      // ✅ FIND FIXTURE TITLE (FINAL FIXED VERSION)
-      let title = sheetName;
-
-      for(let i = 0; i < 5; i++){
-        if(rows[i] && rows[i].c){
-          for(let cell of rows[i].c){
-            if(cell && cell.v && typeof cell.v === "string" && cell.v.toLowerCase().includes("vs")){
-              title = cell.v
-                .split(" - ").pop()
-                .replace(" 1st Team","")
-                .replace(" 2nd Team","")
-                .trim();
-              break;
-            }
-          }
-        }
-      }
+      // ✅ BULLETPROOF HEADER
+      let title = `${home} vs ${away}`;
 
       let html = `<div class="modal-content">
                     <h2>${title}</h2>
@@ -397,7 +382,7 @@ function loadTable(sheet, element){
       r.c.slice(0, maxCols).forEach((c,i) => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // ✅ VIEW BUTTON
+        // ✅ VIEW BUTTON (NOW PASSES TEAMS)
         if(sheet.includes("Fixtures") && i === 5){
           const matchNumber = index + 1;
 
@@ -406,8 +391,11 @@ function loadTable(sheet, element){
             teamType = "2nd Team";
           }
 
+          const home = r.c[1]?.v || "";
+          const away = r.c[4]?.v || "";
+
           html += `<td>${value}<br>
-            <button class="view-btn" onclick="loadMatchSheet('Match ${matchNumber} ${teamType}')">View</button>
+            <button class="view-btn" onclick="loadMatchSheet('Match ${matchNumber} ${teamType}', '${home}', '${away}')">View</button>
           </td>`;
         }
 
