@@ -325,11 +325,11 @@ function loadMatchSheet(sheetName){
 async function loadMatch(home, away, date){
   const modal = document.getElementById("matchSheetModal");
 
-  if(!isUnlocked(date)){
-    modal.innerHTML = `<div class="modal-content"><h2>Match Sheet Locked</h2><p>Available from 16:00</p><button onclick="closeModal()">Close</button></div>`;
-    modal.style.display="flex";
-    return;
-  }
+ // if(!isUnlocked(date)){
+ // modal.innerHTML = `<div class="modal-content"><h2>Match Sheet Locked</h2><p>Available from 16:00</p><button onclick="closeModal()">Close</button></div>`;
+ //   modal.style.display="flex";
+ //   return;
+  //}
 
   const res = await fetch(MATCH_URL);
   const text = await res.text();
