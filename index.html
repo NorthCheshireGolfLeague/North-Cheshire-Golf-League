@@ -288,6 +288,40 @@ function isUnlocked(dateStr){
   return new Date() >= d;
 }
 
+// ✅ NEW FUNCTION (USES YOUR MATCH SHEETS)
+function loadMatchSheet(sheetName){
+  const modal = document.getElementById("matchSheetModal");
+
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+
+  fetch(url)
+    .then(res => res.text())
+    .then(data => {
+      const json = JSON.parse(data.substr(47).slice(0,-2));
+      const rows = json.table.rows;
+      const cols = json.table.cols;
+
+      let html = `<div class="modal-content">
+                    <h2>${sheetName}</h2>
+                    <table class="match-table">`;
+
+      html += "<tr>" + cols.map(c => `<th>${c.label}</th>`).join("") + "</tr>";
+
+      rows.forEach(r => {
+        if(!r.c) return;
+        html += "<tr>" + r.c.map(c => `<td>${c ? (c.f || c.v || "") : ""}</td>`).join("") + "</tr>";
+      });
+
+      html += `</table>
+               <button onclick="closeModal()">Close</button>
+               </div>`;
+
+      modal.innerHTML = html;
+      modal.style.display = "flex";
+    });
+}
+
+// OLD FUNCTION LEFT IN PLACE (NOT USED ANYMORE)
 async function loadMatch(home, away, date){
   const modal = document.getElementById("matchSheetModal");
 
@@ -356,7 +390,7 @@ function loadTable(sheet, element){
 
     html += "</tr>";
 
-    rows.forEach(r => {
+    rows.forEach((r, index) => {
       if(!r.c) return;
 
       html += `<tr>`;
@@ -364,15 +398,20 @@ function loadTable(sheet, element){
       r.c.slice(0, maxCols).forEach((c,i) => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
+        // ✅ UPDATED BUTTON LOGIC
         if(sheet.includes("Fixtures") && i === 5){
-          const home = r.c[1]?.v || "";
-          const away = r.c[4]?.v || "";
-          const date = r.c[5]?.v || "";
+          const matchNumber = index + 1;
+
+          let teamType = "1st Team";
+          if(sheet.includes("2nd")){
+            teamType = "2nd Team";
+          }
 
           html += `<td>${value}<br>
-          <button class="view-btn" onclick="loadMatch('${home}','${away}','${date}')">View</button>
+          <button class="view-btn" onclick="loadMatchSheet('Match ${matchNumber} ${teamType}')">View</button>
           </td>`;
         }
+
         else if(element === "contacts" && value && value.toString().startsWith("07")){
           let clean = value.toString().replace(/\s/g,"");
 
@@ -381,6 +420,7 @@ function loadTable(sheet, element){
             <a class="btn whatsapp-btn" href="https://wa.me/44${clean.substring(1)}">Message</a>
           </td>`;
         }
+
         else{
           html += `<td>${value}</td>`;
         }
@@ -454,6 +494,5 @@ loadTable("Contacts","contacts");
 
 show("f1");
 </script>
-
 </body>
 </html>
