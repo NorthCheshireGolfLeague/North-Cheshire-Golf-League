@@ -273,7 +273,7 @@ tr:hover {
 <!-- NEW MODAL -->
 <div id="matchSheetModal" class="modal"></div>
 
-<script>
+ <script>
 
 // ✅ TWO SHEETS
 const MAIN_SHEET_ID = "1e3Tl5l6zLqx8Vbk6PX1U13eRyZ2McFd2qcLJhmWGh5g";
@@ -284,7 +284,7 @@ function show(id){
   document.getElementById(id).classList.add('active');
 }
 
-// ✅ MATCH SHEET LOADER (CLEAN VERSION)
+// ✅ MATCH SHEET LOADER (FINAL FIXED VERSION)
 function loadMatchSheet(sheetName){
   const modal = document.getElementById("matchSheetModal");
 
@@ -306,23 +306,29 @@ function loadMatchSheet(sheetName){
         return;
       }
 
-      // ✅ GET TEAM NAMES
-      const firstRow = rows[0].c;
-      const homeTeam = firstRow[8] ? firstRow[8].v : "Home";
-      const awayTeam = firstRow[9] ? firstRow[9].v : "Away";
+      // ✅ Get fixture title from row 11
+      let fixtureText = "";
+      if(rows[9] && rows[9].c && rows[9].c[0]){
+        fixtureText = rows[9].c[0].v;
+      }
+
+      let title = fixtureText
+        ? fixtureText.split(" - ")[1].replace(" 1st Team","").replace(" 2nd Team","")
+        : sheetName;
 
       let html = `<div class="modal-content">
-                    <h2>${homeTeam} vs ${awayTeam}</h2>
+                    <h2>${title}</h2>
                     <table class="match-table">`;
 
-      // headers (only relevant columns)
-      html += "<tr>" + cols.slice(1,8).map(c => `<th>${c.label}</th>`).join("") + "</tr>";
+      // ✅ Headers A–G
+      html += "<tr>" + cols.slice(0,7).map(c => `<th>${c.label}</th>`).join("") + "</tr>";
 
-      // rows (REMOVE bottom junk rows)
-      rows.slice(0, -2).forEach(r => {
-        if(!r.c) return;
+      // ✅ Get only player rows
+      let playerRows = rows.slice(1).filter(r => r.c && r.c[0] && r.c[0].v);
 
-        html += "<tr>" + r.c.slice(1,8).map(c =>
+      // ✅ Render correct number of rows automatically
+      playerRows.forEach(r => {
+        html += "<tr>" + r.c.slice(0,7).map(c =>
           `<td>${c ? (c.f || c.v || "") : ""}</td>`
         ).join("") + "</tr>";
       });
@@ -480,7 +486,7 @@ loadTable("Contacts","contacts");
 
 show("f1");
 
-</script>    
- 
+</script>
+  
 </body>
 </html>
