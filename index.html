@@ -273,9 +273,8 @@ tr:hover {
 <!-- NEW MODAL -->
 <div id="matchSheetModal" class="modal"></div>
 
-<script>
+  <script>
 const sheetID = "2PACX-1vSqeNyoW2iJp_PnQ6EQJ5dgADDw1NEn0N_U9jBYINane5gQ9HOcK8nGNIJ7XeaK20qEWt5-8sL4jHRj";
-const MATCH_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSqeNyoW2iJp_PnQ6EQJ5dgADDw1NEn0N_U9jBYINane5gQ9HOcK8nGNIJ7XeaK20qEWt5-8sL4jHRj/pub?gid=1122317275&single=true&output=csv";
 
 function show(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -288,12 +287,12 @@ function isUnlocked(dateStr){
   return new Date() >= d;
 }
 
-// ✅ NEW FUNCTION (USES YOUR MATCH SHEETS)
+// ✅ NEW MATCH SHEET LOADER (USES YOUR MATCH TABS)
 function loadMatchSheet(sheetName){
   const modal = document.getElementById("matchSheetModal");
 
   const url = `https://docs.google.com/spreadsheets/d/e/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
-   
+
   fetch(url)
     .then(res => res.text())
     .then(data => {
@@ -319,36 +318,6 @@ function loadMatchSheet(sheetName){
       modal.innerHTML = html;
       modal.style.display = "flex";
     });
-}
-
-// OLD FUNCTION LEFT IN PLACE (NOT USED ANYMORE)
-async function loadMatch(home, away, date){
-  const modal = document.getElementById("matchSheetModal");
-
- // if(!isUnlocked(date)){
- // modal.innerHTML = `<div class="modal-content"><h2>Match Sheet Locked</h2><p>Available from 16:00</p><button onclick="closeModal()">Close</button></div>`;
- //   modal.style.display="flex";
- //   return;
-  //}
-
-  const res = await fetch(MATCH_URL);
-  const text = await res.text();
-  const rows = text.split("\n").map(r=>r.split(","));
-
-  let matchRows = rows.filter(r => r.join(" ").includes(home) && r.join(" ").includes(away));
-
-  let html = `<div class="modal-content"><h2>${home} vs ${away}</h2><table class="match-table">`;
-
-  html += "<tr>" + rows[0].map(c => `<th>${c}</th>`).join("") + "</tr>";
-
-  matchRows.forEach(r=>{
-    html += "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>";
-  });
-
-  html += `</table><button onclick="closeModal()">Close</button></div>`;
-
-  modal.innerHTML = html;
-  modal.style.display="flex";
 }
 
 function closeModal(){
@@ -398,7 +367,7 @@ function loadTable(sheet, element){
       r.c.slice(0, maxCols).forEach((c,i) => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // ✅ UPDATED BUTTON LOGIC
+        // ✅ FIXTURE BUTTON NOW LOADS MATCH SHEETS
         if(sheet.includes("Fixtures") && i === 5){
           const matchNumber = index + 1;
 
@@ -408,7 +377,7 @@ function loadTable(sheet, element){
           }
 
           html += `<td>${value}<br>
-          <button class="view-btn" onclick="loadMatchSheet('Match ${matchNumber} ${teamType}')">View</button>
+            <button class="view-btn" onclick="loadMatchSheet('Match ${matchNumber} ${teamType}')">View</button>
           </td>`;
         }
 
