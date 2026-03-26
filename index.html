@@ -435,9 +435,12 @@ function loadTable(sheet, element){
     html += "</tr>";
 
     // ✅ ROWS
-    rows.forEach((r, index) => {
+   rows.forEach((r, index) => {
 
-      if(!r.c) return;
+  // ✅ ONLY skip header row for contacts
+  if(element === "contacts" && index === 0) return;
+
+  if(!r.c) return;
 
       html += "<tr>";
 
