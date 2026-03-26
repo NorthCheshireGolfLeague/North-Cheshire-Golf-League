@@ -284,7 +284,7 @@ function show(id){
   document.getElementById(id).classList.add('active');
 }
 
-// ✅ MATCH SHEET LOADER (FINAL FIXED)
+// ✅ MATCH SHEET LOADER
 function loadMatchSheet(sheetName, home, away){
   const modal = document.getElementById("matchSheetModal");
 
@@ -306,17 +306,14 @@ function loadMatchSheet(sheetName, home, away){
         return;
       }
 
-      // ✅ BULLETPROOF HEADER
       let title = `${home} vs ${away}`;
 
       let html = `<div class="modal-content">
                     <h2>${title}</h2>
                     <table class="match-table">`;
 
-      // ✅ HEADERS (A–G)
       html += "<tr>" + cols.slice(0,7).map(c => `<th>${c.label}</th>`).join("") + "</tr>";
 
-      // ✅ PLAYER ROWS
       let playerRows = rows.filter(r => r.c && r.c[0] && r.c[0].v);
 
       playerRows.forEach(r => {
@@ -338,7 +335,7 @@ function closeModal(){
   document.getElementById("matchSheetModal").style.display="none";
 }
 
-// ✅ MAIN TABLE LOADER
+// ✅ MAIN TABLE LOADER (FIXED CONTACTS)
 function loadTable(sheet, element){
   const url = `https://docs.google.com/spreadsheets/d/${MAIN_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
 
@@ -349,12 +346,6 @@ function loadTable(sheet, element){
     let rows = json.table.rows;
     const cols = json.table.cols;
 
-    let contactHeaders = null;
-    if(element === "contacts"){
-      contactHeaders = rows[0].c.map(c => c ? c.v : "");
-      rows.shift();
-    }
-
     let html = "<table><tr>";
 
     let maxCols;
@@ -363,40 +354,32 @@ function loadTable(sheet, element){
       maxCols = 6;
     } else if(sheet.includes("League Table")){
       maxCols = 16;
+    } else if(element === "contacts"){
+      maxCols = 3; // ✅ ONLY SHOW FIRST 3 COLUMNS
     } else {
       maxCols = cols.length;
     }
 
-    cols.slice(0, maxCols).forEach((c, i) => {
-  let header = (element === "contacts" && contactHeaders) ? contactHeaders[i] : c.label || "";
-
-  // ❌ skip empty/null columns
-  if(!header || header.toLowerCase() === "null") return;
-
-  html += `<th>${header}</th>`;
-});
+    // ✅ HEADERS
+    cols.slice(0, maxCols).forEach(c => {
+      html += `<th>${c.label || ""}</th>`;
+    });
 
     html += "</tr>";
 
     rows.forEach((r, index) => {
       if(!r.c) return;
 
-      html += `<tr>`;
+      html += "<tr>";
 
-     r.c.slice(0, maxCols).forEach((c,i) => {
-  let header = cols[i]?.label || "";
-
-  if(!header || header.toLowerCase() === "null") return;
+      r.c.slice(0, maxCols).forEach((c,i) => {
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // ✅ VIEW BUTTON (NOW PASSES TEAMS)
+        // ✅ VIEW BUTTON
         if(sheet.includes("Fixtures") && i === 5){
           const matchNumber = index + 1;
 
-          let teamType = "1st Team";
-          if(sheet.includes("2nd")){
-            teamType = "2nd Team";
-          }
+          let teamType = sheet.includes("2nd") ? "2nd Team" : "1st Team";
 
           const home = r.c[1]?.v || "";
           const away = r.c[4]?.v || "";
@@ -406,7 +389,8 @@ function loadTable(sheet, element){
           </td>`;
         }
 
-        else if(element === "contacts" && value && value.toString().startsWith("07")){
+        // ✅ CONTACT BUTTONS
+        else if(element === "contacts" && i === 2 && value){
           let clean = value.toString().replace(/\s/g,"");
 
           html += `<td>${value}<br>
@@ -488,7 +472,6 @@ loadTable("Contacts","contacts");
 
 show("f1");
 
-</script>  
-
+</script>
 </body>
 </html>
