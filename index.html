@@ -284,14 +284,14 @@ tr:hover {
 </div>
 
 <nav>
-  <button onclick="show('f1')">1st Team Fixtures</button>
-  <button onclick="show('t1')">1st Team League Table</button>
-  <button onclick="show('f2')">2nd Team Fixtures</button>
-  <button onclick="show('t2')">2nd Team League Table</button>
-  <button onclick="show('knockout')">Knockout Finals</button>
-  <button onclick="show('rules')">Rules</button>
-  <button onclick="show('honors')">Honours</button>
-  <button onclick="show('contacts')">Contacts</button>
+  <button onclick="show('f1')" data-page="f1">1st Team Fixtures</button>
+  <button onclick="show('t1')" data-page="t1">1st Team League Table</button>
+  <button onclick="show('f2')" data-page="f2">2nd Team Fixtures</button>
+  <button onclick="show('t2')" data-page="t2">2nd Team League Table</button>
+  <button onclick="show('knockout')" data-page="knockout">Knockout Finals</button>
+  <button onclick="show('rules')" data-page="rules">Rules</button>
+  <button onclick="show('honors')" data-page="honors">Honours</button>
+  <button onclick="show('contacts')" data-page="contacts">Contacts</button>
 </nav>
 
 <div id="f1" class="page"></div>
@@ -321,8 +321,20 @@ const MAIN_SHEET_ID = "1e3Tl5l6zLqx8Vbk6PX1U13eRyZ2McFd2qcLJhmWGh5g";
 const MATCH_SHEET_ID = "1jj51_00IUJZE_4SGGeLgE8taPplg6U9vtMbH8YjuWO8";
 
 function show(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+
+  // show page
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+
+  // reset buttons
+  document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active-btn'));
+
+  // set active button
+  document.querySelectorAll('nav button').forEach(btn => {
+    if(btn.dataset.page === id){
+      btn.classList.add('active-btn');
+    }
+  });
 }
 
 // ✅ MATCH SHEET LOADER
