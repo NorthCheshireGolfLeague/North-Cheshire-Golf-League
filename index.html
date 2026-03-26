@@ -437,9 +437,9 @@ function loadTable(sheet, element){
     // ✅ ROWS
     rows.forEach((r, index) => {
 
+      if(index === 0) return;
+      
       if(!r.c) return;
-
-      const isHeaderRow = index === 0;
 
       html += "<tr>";
 
@@ -448,7 +448,7 @@ function loadTable(sheet, element){
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
         // ✅ CONTACTS WITH ICONS
-        if(element === "contacts" && i === 2 && !isHeaderRow){
+        if(element === "contacts" && i === 2){
 
           const phone = value.replace(/\s+/g, "");
 
