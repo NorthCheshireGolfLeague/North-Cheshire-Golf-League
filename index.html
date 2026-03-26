@@ -16,7 +16,7 @@ html, body {
   background: #f4f6f8;
 }
 
-/* HEADER (UPDATED DESIGN) */
+/* HEADER */
 .header {
   text-align: center;
   padding: 30px 20px;
@@ -27,7 +27,7 @@ html, body {
   position: relative;
 }
 
-/* GOLD BORDER TOP + BOTTOM */
+/* GOLD BARS */
 .header::before,
 .header::after {
   content: "";
@@ -38,13 +38,8 @@ html, body {
   background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
 }
 
-.header::before {
-  top: 0;
-}
-
-.header::after {
-  bottom: 0;
-}
+.header::before { top: 0; }
+.header::after { bottom: 0; }
 
 /* LOGO */
 .header img {
@@ -60,27 +55,40 @@ html, body {
   font-weight: 600;
 }
 
-/* NAV */
+/* NAV BAR */
 nav {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   width: 100%;
-  background: #2e5cb8;
+  background: #0b1f4b;
+  border-top: 2px solid #d4af37;
+  border-bottom: 2px solid #d4af37;
 }
 
+/* NAV BUTTONS */
 nav button {
-  padding: 10px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: #2e5cb8;
+  padding: 12px;
+  border: 1px solid rgba(212,175,55,0.2);
+  background: transparent;
   color: white;
   font-weight: bold;
   font-size: 12px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 4px;
 }
 
+/* HOVER */
 nav button:hover {
-  background: #d4af37;
+  background: rgba(212,175,55,0.15);
+  color: #ffd700;
+}
+
+/* ACTIVE BUTTON */
+nav button.active-btn {
+  background: linear-gradient(135deg, #d4af37, #ffd700);
   color: black;
+  box-shadow: 0 0 8px rgba(212,175,55,0.6);
 }
 
 /* PAGES */
@@ -152,7 +160,7 @@ tr:hover {
   z-index: 3;
 }
 
-/* Knockout */
+/* KNOCKOUT */
 .match {
   background: white;
   border-radius: 8px;
@@ -208,15 +216,16 @@ tr:hover {
   font-weight: bold;
 }
 
-/* MATCH BUTTON */
+/* VIEW BUTTON */
 .view-btn {
-  background: #d4af37;
+  background: linear-gradient(135deg, #d4af37, #ffd700);
   color: black;
   border: none;
   padding: 5px 8px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 11px;
+  box-shadow: 0 0 5px rgba(212,175,55,0.5);
 }
 
 /* MODAL */
