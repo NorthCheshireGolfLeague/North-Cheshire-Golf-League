@@ -428,7 +428,6 @@ function loadTable(sheet, element){
       html += `<th>${header}</th>`;
     });
 
-    // ✅ ADD TEAM SHEET HEADER
     if(sheet.includes("Fixtures")){
       html += "<th>Team Sheet</th>";
     }
@@ -446,16 +445,25 @@ function loadTable(sheet, element){
 
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // FIX DATE COLUMN (no button inside)
-        if(sheet.includes("Fixtures") && i === 5){
-          html += `<td>${value}</td>`;
-        } else {
+        // ✅ CONTACTS WITH ICONS
+        if(element === "contacts" && i === 2){
+
+          const phone = value.replace(/\s+/g, "");
+
+          html += `<td>
+            ${value}<br>
+            <a href="tel:${phone}" class="btn call-btn">📞 Call</a>
+            <a href="https://wa.me/44${phone.substring(1)}" target="_blank" class="btn whatsapp-btn">💬 Message</a>
+          </td>`;
+        }
+
+        else{
           html += `<td>${value}</td>`;
         }
 
       });
 
-      // ✅ ADD BUTTON COLUMN
+      // ✅ FIXTURES BUTTON
       if(sheet.includes("Fixtures")){
         const matchNumber = index + 1;
         let teamType = sheet.includes("2nd") ? "2nd Team" : "1st Team";
@@ -491,6 +499,5 @@ loadTable("Contacts","contacts");
 show("f1");
 
 </script>
-
 </body>
 </html>
