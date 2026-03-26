@@ -419,16 +419,7 @@ function loadTable(sheet, element){
     // ✅ HEADERS
     cols.slice(0, maxCols).forEach((c, i) => {
 
-      let header = c.label;
-
-if(!header || header === ""){
-  if(element === "contacts"){
-    const contactHeaders = ["Golf Club","Captain Name","Phone Number"];
-    header = contactHeaders[i] || "";
-  } else {
-    header = "";
-  }
-}
+      let header = c.label || "";
 
       if(element === "rules" && i === 0){
         header = "North Cheshire League Rules";
@@ -446,8 +437,6 @@ if(!header || header === ""){
     // ✅ ROWS
     rows.forEach((r, index) => {
 
-      if(index === 0) return;
-      
       if(!r.c) return;
 
       html += "<tr>";
