@@ -425,9 +425,14 @@ function loadTable(sheet, element){
 
     // ✅ HEADERS
     cols.slice(0, maxCols).forEach((c, i) => {
-      let header = (element === "contacts" && contactHeaders)
-        ? contactHeaders[i]
-        : c.label || "";
+     let header = (element === "contacts" && contactHeaders)
+  ? contactHeaders[i]
+  : c.label || "";
+
+// ✅ FIX RULES HEADER
+if(element === "rules" && i === 0){
+  header = "North Cheshire League Rules";
+}
 
       html += `<th>${header}</th>`;
     });
