@@ -419,13 +419,19 @@ function loadTable(sheet, element){
     // ✅ HEADERS
     cols.slice(0, maxCols).forEach((c, i) => {
 
-      let header = c.label || "";
+      let header = c.label;
+
+      // ✅ FORCE CONTACT HEADERS
+      if(element === "contacts"){
+        const contactHeaders = ["Golf Club","Captain Name","Phone Number"];
+        header = contactHeaders[i] || "";
+      }
 
       if(element === "rules" && i === 0){
         header = "North Cheshire League Rules";
       }
 
-      html += `<th>${header}</th>`;
+      html += `<th>${header || ""}</th>`;
     });
 
     if(sheet.includes("Fixtures")){
@@ -435,12 +441,12 @@ function loadTable(sheet, element){
     html += "</tr>";
 
     // ✅ ROWS
-   rows.forEach((r, index) => {
+    rows.forEach((r, index) => {
 
-  // ✅ ONLY skip header row for contacts
-  if(element === "contacts" && index === 0) return;
+      // ✅ Skip header row ONLY for contacts
+      if(element === "contacts" && index === 0) return;
 
-  if(!r.c) return;
+      if(!r.c) return;
 
       html += "<tr>";
 
@@ -448,7 +454,7 @@ function loadTable(sheet, element){
 
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // ✅ CONTACTS WITH ICONS
+        // ✅ CONTACT BUTTONS
         if(element === "contacts" && i === 2){
 
           const phone = value.replace(/\s+/g, "");
@@ -489,11 +495,61 @@ function loadTable(sheet, element){
   });
 }
 
+// ✅ KNOCKOUT LOADER (FIXED)
+function loadKnockout(sheet, element){
+
+  const url = `https://docs.google.com/spreadsheets/d/${MAIN_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
+
+  fetch(url)
+  .then(res => res.text())
+  .then(data => {
+
+    const json = JSON.parse(data.substr(47).slice(0,-2));
+    const rows = json.table.rows;
+
+    let html = "";
+    let currentStage = "";
+
+    rows.forEach(r => {
+      if(!r.c) return;
+
+      const stage = r.c[0]?.v || "";
+      const home = r.c[1]?.v || "";
+      const hs = r.c[2]?.v || "";
+      const as = r.c[3]?.v || "";
+      const away = r.c[4]?.v || "";
+      const date = r.c[5]?.f || "";
+      const venue = r.c[6]?.v || "";
+
+      if(stage !== currentStage){
+        html += `<div class="stage">${stage}</div>`;
+        currentStage = stage;
+      }
+
+      html += `
+        <div class="match">
+          <div class="teams">
+            <span>${home}</span>
+            <span>${away}</span>
+          </div>
+          <div class="score">${hs} - ${as}</div>
+          <div class="details">${date} | ${venue}</div>
+        </div>
+      `;
+    });
+
+    document.getElementById(element).innerHTML = html;
+  });
+}
+
 // LOAD DATA
 loadTable("1st Team Fixtures","f1");
 loadTable("1st Team League Table (Sorted)","t1");
 loadTable("2nd Team Fixtures","f2");
 loadTable("2nd Team League Table (Sorted)","t2");
+
+loadKnockout("Knockout Finals 1st Team","ko1");
+loadKnockout("Knockout Finals 2nd Team","ko2");
 
 loadTable("Rules","rules");
 loadTable("Honors","honors");
