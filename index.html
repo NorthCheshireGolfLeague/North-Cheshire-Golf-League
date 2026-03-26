@@ -368,9 +368,13 @@ function loadTable(sheet, element){
     }
 
     cols.slice(0, maxCols).forEach((c, i) => {
-      let header = (element === "contacts" && contactHeaders) ? contactHeaders[i] : c.label || "";
-      html += `<th>${header}</th>`;
-    });
+  let header = (element === "contacts" && contactHeaders) ? contactHeaders[i] : c.label || "";
+
+  // ❌ skip empty/null columns
+  if(!header || header.toLowerCase() === "null") return;
+
+  html += `<th>${header}</th>`;
+});
 
     html += "</tr>";
 
@@ -379,7 +383,10 @@ function loadTable(sheet, element){
 
       html += `<tr>`;
 
-      r.c.slice(0, maxCols).forEach((c,i) => {
+     r.c.slice(0, maxCols).forEach((c,i) => {
+  let header = cols[i]?.label || "";
+
+  if(!header || header.toLowerCase() === "null") return;
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
         // ✅ VIEW BUTTON (NOW PASSES TEAMS)
