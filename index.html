@@ -312,8 +312,10 @@ function loadMatchSheet(sheetName, home, away){
                     <h2>${title}</h2>
                     <table class="match-table">`;
 
+      // headers
       html += "<tr>" + cols.slice(0,7).map(c => `<th>${c.label}</th>`).join("") + "</tr>";
 
+      // rows
       let playerRows = rows.filter(r => r.c && r.c[0] && r.c[0].v);
 
       playerRows.forEach(r => {
@@ -335,7 +337,7 @@ function closeModal(){
   document.getElementById("matchSheetModal").style.display="none";
 }
 
-// ✅ MAIN TABLE LOADER (FIXED CONTACTS)
+// ✅ MAIN TABLE LOADER (FINAL FIXED CONTACTS)
 function loadTable(sheet, element){
   const url = `https://docs.google.com/spreadsheets/d/${MAIN_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
 
@@ -346,6 +348,14 @@ function loadTable(sheet, element){
     let rows = json.table.rows;
     const cols = json.table.cols;
 
+    // ✅ CONTACT HEADERS FIX
+    let contactHeaders = null;
+
+    if(element === "contacts"){
+      contactHeaders = rows[0].c.map(c => c ? c.v : "");
+      rows.shift(); // remove header row
+    }
+
     let html = "<table><tr>";
 
     let maxCols;
@@ -355,14 +365,18 @@ function loadTable(sheet, element){
     } else if(sheet.includes("League Table")){
       maxCols = 16;
     } else if(element === "contacts"){
-      maxCols = 3; // ✅ ONLY SHOW FIRST 3 COLUMNS
+      maxCols = 3;
     } else {
       maxCols = cols.length;
     }
 
     // ✅ HEADERS
-    cols.slice(0, maxCols).forEach(c => {
-      html += `<th>${c.label || ""}</th>`;
+    cols.slice(0, maxCols).forEach((c, i) => {
+      let header = (element === "contacts" && contactHeaders)
+        ? contactHeaders[i]
+        : c.label || "";
+
+      html += `<th>${header}</th>`;
     });
 
     html += "</tr>";
@@ -378,7 +392,6 @@ function loadTable(sheet, element){
         // ✅ VIEW BUTTON
         if(sheet.includes("Fixtures") && i === 5){
           const matchNumber = index + 1;
-
           let teamType = sheet.includes("2nd") ? "2nd Team" : "1st Team";
 
           const home = r.c[1]?.v || "";
@@ -389,7 +402,7 @@ function loadTable(sheet, element){
           </td>`;
         }
 
-        // ✅ CONTACT BUTTONS
+        // ✅ CONTACT BUTTONS ONLY ON PHONE COLUMN
         else if(element === "contacts" && i === 2 && value){
           let clean = value.toString().replace(/\s/g,"");
 
