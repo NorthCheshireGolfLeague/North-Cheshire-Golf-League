@@ -26,9 +26,14 @@ html, body {
   position: relative;
 
   background:
-    radial-gradient(circle at 50% 30%, rgba(255,255,255,0.08), transparent 60%),
-    url("https://www.transparenttextures.com/patterns/hexellence.png"),
-    linear-gradient(180deg, #1a2f6b 0%, #091a3a 100%);
+    radial-gradient(circle at center, rgba(0,60,140,0.6) 0%, rgba(0,20,60,0.9) 60%, #081a3a 100%),
+    repeating-radial-gradient(
+      circle at center,
+      rgba(255,255,255,0.04) 0px,
+      rgba(255,255,255,0.04) 1px,
+      transparent 1px,
+      transparent 12px
+    );
 
   box-shadow: 0 8px 25px rgba(0,0,0,0.35);
 }
@@ -47,10 +52,18 @@ html, body {
 .header::before { top: 0; }
 .header::after { bottom: 0; }
 
-/* LOGO */
+/* LOGO (WITH GOLD OUTLINE) */
 .header img {
   width: 125px;
   margin-bottom: 15px;
+
+  /* GOLD RING EFFECT */
+  border: 2px solid #d4af37;
+  border-radius: 50%;
+  padding: 6px;
+
+  background: rgba(0,0,0,0.2);
+
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
 }
 
