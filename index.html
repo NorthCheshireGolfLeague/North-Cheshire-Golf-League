@@ -8,44 +8,46 @@
 <link rel="icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
 
-<<style>
+<style>
 
-/* RESET */
+/* GLOBAL RESET */
 html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  overflow-x: hidden;
   font-family: Arial, sans-serif;
   background: #f4f6f8;
-  overflow-x: hidden;
 }
 
 /* HEADER */
 .header {
   text-align: center;
-  padding: 30px 15px;
+  padding: 60px 20px 45px;
   color: white;
+  position: relative;
   width: 100%;
-  box-sizing: border-box;
 
   background:
-    linear-gradient(rgba(11,31,75,0.85), rgba(11,31,75,0.95)),
-    url("https://i.postimg.cc/YvyMMNth/your-image.png");
+    radial-gradient(circle at center, rgba(255,255,255,0.12), transparent 65%),
+    url("https://i.postimg.cc/YvyMMNth/your-image.png"),
+    linear-gradient(180deg, #1a2f6b 0%, #091a3a 100%);
 
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  position: relative;
+
+  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
 }
 
-/* GOLD BARS FULL WIDTH */
+/* GOLD BARS */
 .header::before,
 .header::after {
   content: "";
   position: absolute;
   left: 0;
   width: 100%;
-  height: 5px;
-  background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+  height: 6px;
+  background: linear-gradient(90deg,#d4af37,#ffd700,#d4af37);
 }
 
 .header::before { top: 0; }
@@ -53,279 +55,22 @@ html, body {
 
 /* LOGO */
 .header img {
-  width: 110px;
-  margin-bottom: 10px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-
-  /* subtle gold glow */
-  filter: drop-shadow(0 0 6px rgba(212,175,55,0.6));
+  width: 125px;
+  margin-bottom: 15px;
+  filter:
+    drop-shadow(0 0 2px #d4af37)
+    drop-shadow(0 0 6px rgba(212,175,55,0.6))
+    drop-shadow(0 4px 8px rgba(0,0,0,0.4));
 }
 
 /* TITLE */
 .header h2 {
-  font-size: 26px;
-  margin: 10px 0 0;
+  font-size: 30px;
+  letter-spacing: 2px;
+  margin: 0;
   font-weight: 600;
-  text-align: center;
 }
 
-/* NAV BAR */
-nav {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  width: 100%;
-  background: #0b1f4b;
-  border-top: 2px solid #d4af37;
-  border-bottom: 2px solid #d4af37;
-  gap: 2px;
-}
-
-/* NAV BUTTONS */
-nav button {
-  padding: 12px;
-  border: none;
-  background: transparent;
-  color: white;
-  font-weight: bold;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
-}
-
-nav button:hover {
-  background: rgba(212,175,55,0.2);
-  color: #ffd700;
-}
-
-nav button.active-btn {
-  background: linear-gradient(135deg, #d4af37, #ffd700);
-  color: black;
-}
-
-/* PAGES */
-.page {
-  display: none;
-  padding: 10px;
-}
-.active {
-  display: block;
-}
-
-/* TABLES */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  margin-top: 10px;
-  border-radius: 8px;
-  font-size: 12px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-}
-
-th {
-  background: linear-gradient(135deg, #1a2f6b, #0b1f4b);
-  color: white;
-  padding: 8px;
-  border-bottom: 2px solid #d4af37;
-  text-transform: uppercase;
-  font-size: 11px;
-}
-
-td {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
-  text-align: center;
-}
-
-tr:nth-child(even) {
-  background: #f9fbff;
-}
-
-tr:hover {
-  background: #dfe8ff;
-}
-
-/* FIXTURES (NO BREAKING TEXT) */
-#f1 table,
-#f2 table,
-#honors table {
-  table-layout: auto;
-}
-
-#f1 th, #f1 td,
-#f2 th, #f2 td,
-#honors th, #honors td {
-  white-space: nowrap;
-  font-size: 11px;
-  padding: 6px 4px;
-}
-
-/* LEAGUE TABLE SCROLL ONLY */
-#t1 table,
-#t2 table {
-  display: block;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-/* STICKY TEAM COLUMN */
-#t1 td:nth-child(2),
-#t2 td:nth-child(2) {
-  position: sticky;
-  left: 0;
-  background: white;
-  z-index: 2;
-  font-weight: bold;
-}
-
-#t1 th:nth-child(2),
-#t2 th:nth-child(2) {
-  position: sticky;
-  left: 0;
-  background: #1f3c88;
-  color: white;
-  z-index: 3;
-}
-
-/* BUTTONS */
-.btn {
-  display: inline-block;
-  padding: 4px 8px;
-  margin: 2px;
-  border-radius: 6px;
-  font-size: 11px;
-  text-decoration: none;
-  color: white;
-}
-
-.call-btn { background: #1f3c88; }
-.whatsapp-btn { background: #d4af37; color: black; }
-
-/* VIEW BUTTON */
-.view-btn {
-  background: linear-gradient(135deg, #d4af37, #ffd700);
-  color: black;
-  border: none;
-  padding: 5px 8px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 11px;
-}
-
-/* KNOCKOUT */
-#knockout {
-  padding: 10px;
-}
-
-.match {
-  width: 100%;
-  box-sizing: border-box;
-  background: white;
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-}
-
-.match .teams {
-  display: flex;
-  justify-content: space-between;
-}
-
-.match .score {
-  text-align: center;
-  font-size: 16px;
-}
-
-.match .details {
-  text-align: center;
-  font-size: 11px;
-}
-
-/* MODAL */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.7);
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.modal-content {
-  background: white;
-  padding: 15px;
-  width: 95%;
-  max-width: 900px;
-  border-radius: 10px;
-}
-
-.modal-content h2 {
-  background: #1f3c88;
-  color: white;
-  padding: 10px;
-  text-align: center;
-}
-
-/* ===== HONOURS NEW DESIGN ===== */
-
-.honours-section-title {
-  margin-top: 15px;
-  padding: 8px;
-  font-weight: bold;
-  background: linear-gradient(135deg, #1a2f6b, #0b1f4b);
-  color: white;
-  border-left: 5px solid #d4af37;
-}
-
-.honours-card {
-  background: white;
-  border-radius: 10px;
-  padding: 12px;
-  margin: 10px 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.honours-card h3 {
-  margin: 0 0 8px;
-  color: #1f3c88;
-  border-bottom: 2px solid #d4af37;
-}
-
-.honours-row {
-  font-size: 13px;
-  margin: 4px 0;
-}
-
-.records-container {
-  background: white;
-  border-radius: 10px;
-  padding: 12px;
-  margin-top: 10px;
-}
-
-.records-block h4 {
-  margin: 0 0 6px;
-  color: #1f3c88;
-  border-bottom: 2px solid #d4af37;
-}
-
-.records-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  margin: 3px 0;
-}
-
-</style>
-  
 /* NAV BAR */
 nav {
   display: grid;
@@ -668,6 +413,7 @@ function loadMatchSheet(sheetName, home, away){
     });
     html += "</tr>";
 
+    rows.slice(1,9).forEach(r => {
     rows.slice(0,8).forEach(r => {
       if(!r.c) return;
 
