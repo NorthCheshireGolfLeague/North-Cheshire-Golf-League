@@ -533,10 +533,6 @@ function loadTable(sheet, element){
         const year = r.c[0]?.v || "";
         const first = r.c[1]?.v || "";
         const second = r.c[2]?.v || "";
-        const double = r.c[3]?.v || "";
-        const doubleWins = r.c[4]?.v || "";
-        const most = r.c[5]?.v || "";
-        const mostWins = r.c[6]?.v || "";
 
         yearCards += `
           <div class="honours-card">
@@ -546,9 +542,27 @@ function loadTable(sheet, element){
           </div>
         `;
 
-        if(double) doubleWinners.push({team: double, wins: doubleWins});
-        if(most) consecutive.push({team: most, wins: mostWins});
       });
+
+      // ✅ DOUBLE WINNERS (E + F)
+rows.forEach(r => {
+  const team = r.c[4]?.v;
+  const wins = r.c[5]?.v;
+
+  if(team && wins){
+    doubleWinners.push({team, wins});
+  }
+});
+
+// ✅ MOST CONSECUTIVE (H + I)
+rows.forEach(r => {
+  const team = r.c[7]?.v;
+  const wins = r.c[8]?.v;
+
+  if(team && wins){
+    consecutive.push({team, wins});
+  }
+});
 
       const recordsHTML = `
         <div class="records-container">
