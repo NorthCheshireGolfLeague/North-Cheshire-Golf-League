@@ -19,12 +19,13 @@ html, body {
 /* HEADER */
 .header {
   text-align: center;
-  padding: 30px 20px;
+  padding: 40px 20px;
   background: radial-gradient(circle at center, #1a2f6b 0%, #0b1f4b 100%);
   color: white;
   width: 100%;
   box-sizing: border-box;
   position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 /* GOLD BARS */
@@ -49,8 +50,8 @@ html, body {
 
 /* TITLE */
 .header h2 {
-  font-size: 26px;
-  letter-spacing: 1px;
+  font-size: 28px;
+  letter-spacing: 1.5px;
   margin: 10px 0 0;
   font-weight: 600;
 }
@@ -63,21 +64,22 @@ nav {
   background: #0b1f4b;
   border-top: 2px solid #d4af37;
   border-bottom: 2px solid #d4af37;
-  gap: 2px;
+  gap: 1px;
 }
 
 /* NAV BUTTONS */
 nav button {
-  padding: 12px;
+  padding: 14px 10px;
   border: none;
   background: transparent;
   color: white;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s ease;
   width: 100%;
   height: 100%;
+  border-right: 1px solid rgba(255,255,255,0.08);
 }
 
 /* HOVER */
@@ -86,7 +88,7 @@ nav button:hover {
   color: #ffd700;
 }
 
-/* ACTIVE BUTTON (FULL GOLD) */
+/* ACTIVE BUTTON */
 nav button.active-btn {
   background: linear-gradient(135deg, #d4af37, #ffd700);
   color: black;
@@ -111,6 +113,7 @@ table {
   margin-top: 10px;
   border-radius: 8px;
   font-size: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
 th {
@@ -124,13 +127,20 @@ th {
 }
 
 td {
-  padding: 6px;
+  padding: 8px;
   border-bottom: 1px solid #eee;
   text-align: center;
 }
 
+/* ROW STRIPING */
+tr:nth-child(even) {
+  background: #f9fbff;
+}
+
+/* HOVER */
 tr:hover {
-  background: #dfe8ff;
+  background: #d6e4ff;
+  transition: 0.2s;
 }
 
 /* FIXTURES */
