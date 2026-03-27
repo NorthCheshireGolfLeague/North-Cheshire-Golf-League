@@ -25,10 +25,13 @@ html, body {
   box-sizing: border-box;
   position: relative;
 
-background:
-  radial-gradient(circle at center, rgba(255,255,255,0.15), transparent 60%),
-  url("https://i.imgur.com/8Qf6R9Y.png"),
-  linear-gradient(180deg, #1a2f6b 0%, #091a3a 100%);;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,0.12), transparent 65%),
+    url("https://postimg.cc/YvyMMNth"),
+    linear-gradient(180deg, #1a2f6b 0%, #091a3a 100%);
+
+  background-size: cover;
+  background-position: center;
 
   box-shadow: 0 8px 25px rgba(0,0,0,0.35);
 }
@@ -47,14 +50,13 @@ background:
 .header::before { top: 0; }
 .header::after { bottom: 0; }
 
-/* LOGO (CORRECT GOLD OUTLINE) */
+/* LOGO (CLEAN GOLD EDGE - NO CIRCLE) */
 .header img {
   width: 125px;
   margin-bottom: 15px;
 
-  /* GOLD EDGE AROUND SHAPE */
   filter:
-    drop-shadow(0 0 0 #d4af37)
+    drop-shadow(0 0 2px #d4af37)
     drop-shadow(0 0 6px rgba(212,175,55,0.6))
     drop-shadow(0 4px 8px rgba(0,0,0,0.4));
 }
