@@ -26,9 +26,7 @@ html, body {
   padding: 60px 20px 45px;
   color: white;
   position: relative;
-
   width: 100%;
-  margin: 0;
 
   background:
     radial-gradient(circle at center, rgba(255,255,255,0.12), transparent 65%),
@@ -77,10 +75,7 @@ html, body {
 nav {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-
   width: 100%;
-  margin: 0;
-
   background: #0b1f4b;
   border-top: 2px solid #d4af37;
   border-bottom: 2px solid #d4af37;
@@ -147,6 +142,7 @@ td {
   text-align: center;
 }
 
+/* ROW STYLING */
 tr:nth-child(even) {
   background: #f9fbff;
 }
@@ -155,7 +151,7 @@ tr:hover {
   background: #d6e4ff;
 }
 
-/* LEAGUE TABLE SCROLL */
+/* LEAGUE TABLES (SCROLL ONLY HERE) */
 #t1 table,
 #t2 table {
   display: block;
@@ -182,17 +178,57 @@ tr:hover {
   z-index: 3;
 }
 
-/* KNOCKOUT (FORCE SAME LOOK AS DESKTOP) */
+/* FIX FIXTURES */
+#f1 table,
+#f2 table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#f1 td, #f1 th,
+#f2 td, #f2 th {
+  white-space: normal;
+  word-break: break-word;
+  font-size: 11px;
+}
+
+/* FIX VIEW BUTTON */
+.view-btn {
+  width: 100%;
+  font-size: 10px;
+  padding: 4px;
+  background: linear-gradient(135deg, #d4af37, #ffd700);
+  color: black;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* FIX HONORS */
+#honors table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#honors td, #honors th {
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* KNOCKOUT */
+#knockout {
+  padding: 10px;
+  box-sizing: border-box;
+}
+
 .match {
+  width: 100%;
+  box-sizing: border-box;
   background: white;
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-
-  /* FORCE DESKTOP STYLE */
-  display: block;
-  width: 100%;
 }
 
 .match .teams {
@@ -220,6 +256,11 @@ tr:hover {
   padding-left: 8px;
 }
 
+/* PREVENT OVERFLOW */
+#f1, #f2, #honors, #knockout {
+  overflow-x: hidden;
+}
+
 /* BUTTONS */
 .btn {
   display: inline-block;
@@ -238,17 +279,6 @@ tr:hover {
 .whatsapp-btn {
   background: #d4af37;
   color: black;
-}
-
-/* VIEW BUTTON */
-.view-btn {
-  background: linear-gradient(135deg, #d4af37, #ffd700);
-  color: black;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 11px;
 }
 
 /* MODAL */
