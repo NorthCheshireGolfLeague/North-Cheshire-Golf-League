@@ -8,46 +8,44 @@
 <link rel="icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/t4HrGR7v/NCL-LOGO-LARGE-DARK.png">
 
-<style>
+<<style>
 
-/* GLOBAL RESET */
+/* RESET */
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  overflow-x: hidden;
   font-family: Arial, sans-serif;
   background: #f4f6f8;
+  overflow-x: hidden;
 }
 
 /* HEADER */
 .header {
   text-align: center;
-  padding: 60px 20px 45px;
+  padding: 30px 15px;
   color: white;
-  position: relative;
   width: 100%;
+  box-sizing: border-box;
 
   background:
-    radial-gradient(circle at center, rgba(255,255,255,0.12), transparent 65%),
-    url("https://i.postimg.cc/YvyMMNth/your-image.png"),
-    linear-gradient(180deg, #1a2f6b 0%, #091a3a 100%);
+    linear-gradient(rgba(11,31,75,0.85), rgba(11,31,75,0.95)),
+    url("https://i.postimg.cc/YvyMMNth/your-image.png");
 
   background-size: cover;
   background-position: center;
-
-  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+  background-repeat: no-repeat;
+  position: relative;
 }
 
-/* GOLD BARS */
+/* GOLD BARS FULL WIDTH */
 .header::before,
 .header::after {
   content: "";
   position: absolute;
   left: 0;
   width: 100%;
-  height: 6px;
-  background: linear-gradient(90deg,#d4af37,#ffd700,#d4af37);
+  height: 5px;
+  background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
 }
 
 .header::before { top: 0; }
@@ -55,20 +53,22 @@ html, body {
 
 /* LOGO */
 .header img {
-  width: 125px;
-  margin-bottom: 15px;
-  filter:
-    drop-shadow(0 0 2px #d4af37)
-    drop-shadow(0 0 6px rgba(212,175,55,0.6))
-    drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+  width: 110px;
+  margin-bottom: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+
+  /* subtle gold glow */
+  filter: drop-shadow(0 0 6px rgba(212,175,55,0.6));
 }
 
 /* TITLE */
 .header h2 {
-  font-size: 30px;
-  letter-spacing: 2px;
-  margin: 0;
+  font-size: 26px;
+  margin: 10px 0 0;
   font-weight: 600;
+  text-align: center;
 }
 
 /* NAV BAR */
@@ -79,21 +79,20 @@ nav {
   background: #0b1f4b;
   border-top: 2px solid #d4af37;
   border-bottom: 2px solid #d4af37;
-  gap: 1px;
+  gap: 2px;
 }
 
 /* NAV BUTTONS */
 nav button {
-  padding: 14px 10px;
+  padding: 12px;
   border: none;
   background: transparent;
   color: white;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   width: 100%;
-  height: 100%;
 }
 
 nav button:hover {
@@ -109,9 +108,8 @@ nav button.active-btn {
 /* PAGES */
 .page {
   display: none;
-  padding: 10px 12px;
+  padding: 10px;
 }
-
 .active {
   display: block;
 }
@@ -142,16 +140,30 @@ td {
   text-align: center;
 }
 
-/* ROW STYLING */
 tr:nth-child(even) {
   background: #f9fbff;
 }
 
 tr:hover {
-  background: #d6e4ff;
+  background: #dfe8ff;
 }
 
-/* LEAGUE TABLES (SCROLL ONLY HERE) */
+/* FIXTURES (NO BREAKING TEXT) */
+#f1 table,
+#f2 table,
+#honors table {
+  table-layout: auto;
+}
+
+#f1 th, #f1 td,
+#f2 th, #f2 td,
+#honors th, #honors td {
+  white-space: nowrap;
+  font-size: 11px;
+  padding: 6px 4px;
+}
+
+/* LEAGUE TABLE SCROLL ONLY */
 #t1 table,
 #t2 table {
   display: block;
@@ -178,47 +190,34 @@ tr:hover {
   z-index: 3;
 }
 
-/* FIX FIXTURES (NO WORD BREAKING) */
-#f1 table,
-#f2 table {
-  table-layout: auto;
-  width: 100%;
+/* BUTTONS */
+.btn {
+  display: inline-block;
+  padding: 4px 8px;
+  margin: 2px;
+  border-radius: 6px;
+  font-size: 11px;
+  text-decoration: none;
+  color: white;
 }
 
-#f1 td, #f1 th,
-#f2 td, #f2 th {
-  white-space: nowrap;
-  font-size: 10px;
-  padding: 6px 4px;
-}
+.call-btn { background: #1f3c88; }
+.whatsapp-btn { background: #d4af37; color: black; }
 
 /* VIEW BUTTON */
 .view-btn {
   background: linear-gradient(135deg, #d4af37, #ffd700);
   color: black;
   border: none;
-  padding: 4px 6px;
-  border-radius: 6px;
+  padding: 5px 8px;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 9px;
-}
-
-/* FIX HONORS */
-#honors table {
-  table-layout: auto;
-  width: 100%;
-}
-
-#honors td, #honors th {
-  white-space: nowrap;
-  font-size: 10px;
-  padding: 6px 4px;
+  font-size: 11px;
 }
 
 /* KNOCKOUT */
 #knockout {
   padding: 10px;
-  box-sizing: border-box;
 }
 
 .match {
@@ -238,47 +237,12 @@ tr:hover {
 
 .match .score {
   text-align: center;
-  margin: 4px 0;
   font-size: 16px;
 }
 
 .match .details {
   text-align: center;
   font-size: 11px;
-  color: #666;
-}
-
-.stage {
-  margin-top: 20px;
-  font-weight: bold;
-  color: #1f3c88;
-  border-left: 4px solid #d4af37;
-  padding-left: 8px;
-}
-
-/* PREVENT OVERFLOW */
-#f1, #f2, #honors, #knockout {
-  overflow-x: hidden;
-}
-
-/* BUTTONS */
-.btn {
-  display: inline-block;
-  padding: 4px 8px;
-  margin: 2px;
-  border-radius: 6px;
-  font-size: 11px;
-  text-decoration: none;
-  color: white;
-}
-
-.call-btn {
-  background: #1f3c88;
-}
-
-.whatsapp-btn {
-  background: #d4af37;
-  color: black;
 }
 
 /* MODAL */
@@ -310,19 +274,54 @@ tr:hover {
   text-align: center;
 }
 
-.match-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+/* ===== HONOURS NEW DESIGN ===== */
 
-.match-table th {
-  background: #1f3c88;
+.honours-section-title {
+  margin-top: 15px;
+  padding: 8px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #1a2f6b, #0b1f4b);
   color: white;
+  border-left: 5px solid #d4af37;
 }
 
-.match-table td {
-  padding: 6px;
-  border-bottom: 1px solid #eee;
+.honours-card {
+  background: white;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 10px 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.honours-card h3 {
+  margin: 0 0 8px;
+  color: #1f3c88;
+  border-bottom: 2px solid #d4af37;
+}
+
+.honours-row {
+  font-size: 13px;
+  margin: 4px 0;
+}
+
+.records-container {
+  background: white;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 10px;
+}
+
+.records-block h4 {
+  margin: 0 0 6px;
+  color: #1f3c88;
+  border-bottom: 2px solid #d4af37;
+}
+
+.records-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin: 3px 0;
 }
 
 </style>
