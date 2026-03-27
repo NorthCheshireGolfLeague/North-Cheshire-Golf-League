@@ -413,7 +413,7 @@ function loadMatchSheet(sheetName, home, away){
     });
     html += "</tr>";
 
-    rows.slice(1,9).forEach(r => {
+    rows.slice(0,8).forEach(r => {
       if(!r.c) return;
 
       html += "<tr>";
