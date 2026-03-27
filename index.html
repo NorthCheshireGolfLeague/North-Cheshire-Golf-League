@@ -10,7 +10,7 @@
 
 <style>
 
-/* GLOBAL RESET (FIXES MOBILE WIDTH) */
+/* GLOBAL RESET */
 html, body {
   margin: 0;
   padding: 0;
@@ -27,9 +27,8 @@ html, body {
   color: white;
   position: relative;
 
-  /* FULL WIDTH FIX */
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
+  width: 100%;
+  margin: 0;
 
   background:
     radial-gradient(circle at center, rgba(255,255,255,0.12), transparent 65%),
@@ -60,7 +59,6 @@ html, body {
 .header img {
   width: 125px;
   margin-bottom: 15px;
-
   filter:
     drop-shadow(0 0 2px #d4af37)
     drop-shadow(0 0 6px rgba(212,175,55,0.6))
@@ -80,9 +78,8 @@ nav {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 
-  /* FULL WIDTH FIX */
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
+  width: 100%;
+  margin: 0;
 
   background: #0b1f4b;
   border-top: 2px solid #d4af37;
@@ -104,13 +101,11 @@ nav button {
   height: 100%;
 }
 
-/* HOVER */
 nav button:hover {
   background: rgba(212,175,55,0.2);
   color: #ffd700;
 }
 
-/* ACTIVE BUTTON */
 nav button.active-btn {
   background: linear-gradient(135deg, #d4af37, #ffd700);
   color: black;
@@ -185,6 +180,44 @@ tr:hover {
   background: #1f3c88;
   color: white;
   z-index: 3;
+}
+
+/* KNOCKOUT (FORCE SAME LOOK AS DESKTOP) */
+.match {
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+
+  /* FORCE DESKTOP STYLE */
+  display: block;
+  width: 100%;
+}
+
+.match .teams {
+  display: flex;
+  justify-content: space-between;
+}
+
+.match .score {
+  text-align: center;
+  margin: 4px 0;
+  font-size: 16px;
+}
+
+.match .details {
+  text-align: center;
+  font-size: 11px;
+  color: #666;
+}
+
+.stage {
+  margin-top: 20px;
+  font-weight: bold;
+  color: #1f3c88;
+  border-left: 4px solid #d4af37;
+  padding-left: 8px;
 }
 
 /* BUTTONS */
