@@ -22,11 +22,17 @@ html, body {
 
 /* HEADER */
 .header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
   text-align: center;
-  padding: 60px 20px 45px;
+  padding: 50px 15px 40px;
   color: white;
   position: relative;
   width: 100%;
+  box-sizing: border-box;
 
   background:
     radial-gradient(circle at center, rgba(255,255,255,0.12), transparent 65%),
@@ -35,8 +41,6 @@ html, body {
 
   background-size: cover;
   background-position: center;
-
-  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
 }
 
 /* GOLD BARS */
@@ -55,8 +59,10 @@ html, body {
 
 /* LOGO */
 .header img {
-  width: 125px;
-  margin-bottom: 15px;
+  display: block;
+  width: 120px;
+  margin: 0 auto 10px;
+
   filter:
     drop-shadow(0 0 2px #d4af37)
     drop-shadow(0 0 6px rgba(212,175,55,0.6))
@@ -65,12 +71,12 @@ html, body {
 
 /* TITLE */
 .header h2 {
-  font-size: 30px;
-  letter-spacing: 2px;
   margin: 0;
-  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: 1px;
+  text-align: center;
 }
-
+  
 /* NAV BAR */
 nav {
   display: grid;
