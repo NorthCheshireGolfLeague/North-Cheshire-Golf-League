@@ -373,7 +373,6 @@ const MAIN_SHEET_ID = "1e3Tl5l6zLqx8Vbk6PX1U13eRyZ2McFd2qcLJhmWGh5g";
 const MATCH_SHEET_ID = "1jj51_00IUJZE_4SGGeLgE8taPplg6U9vtMbH8YjuWO8";
 
 function show(id){
-
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 
@@ -384,6 +383,12 @@ function show(id){
       btn.classList.add('active-btn');
     }
   });
+}
+
+// ✅ SAFE ROW CHECK (REUSABLE)
+function isEmptyRow(r){
+  if(!r.c || !Array.isArray(r.c)) return true;
+  return r.c.every(cell => !cell || (!cell.v && !cell.f));
 }
 
 // ✅ MATCH SHEET LOADER
@@ -413,9 +418,9 @@ function loadMatchSheet(sheetName, home, away){
     });
     html += "</tr>";
 
-    rows.slice(1,9).forEach(r => {
     rows.slice(0,8).forEach(r => {
-      if(!r.c) return;
+
+      if(isEmptyRow(r)) return;
 
       html += "<tr>";
 
@@ -465,12 +470,11 @@ function loadTable(sheet, element){
       maxCols = cols.length;
     }
 
-    // ✅ HEADERS
+    // HEADERS
     cols.slice(0, maxCols).forEach((c, i) => {
 
       let header = c.label;
 
-      // ✅ FORCE CONTACT HEADERS
       if(element === "contacts"){
         const contactHeaders = ["Golf Club","Captain Name","Phone Number"];
         header = contactHeaders[i] || "";
@@ -489,13 +493,12 @@ function loadTable(sheet, element){
 
     html += "</tr>";
 
-    // ✅ ROWS
+    // ROWS
     rows.forEach((r, index) => {
 
-      // ✅ Skip header row ONLY for contacts
-      if(element === "contacts" && index === 0) return;
+      if(isEmptyRow(r)) return;
 
-      if(!r.c) return;
+      if(element === "contacts" && index === 0) return;
 
       html += "<tr>";
 
@@ -503,7 +506,7 @@ function loadTable(sheet, element){
 
         let value = c && (c.f || c.v) ? (c.f || c.v) : "";
 
-        // ✅ CONTACT BUTTONS
+        // CONTACT BUTTONS
         if(element === "contacts" && i === 2){
 
           const phone = value.replace(/\s+/g, "");
@@ -521,7 +524,7 @@ function loadTable(sheet, element){
 
       });
 
-      // ✅ FIXTURES BUTTON
+      // FIXTURES BUTTON
       if(sheet.includes("Fixtures")){
         const matchNumber = index + 1;
         let teamType = sheet.includes("2nd") ? "2nd Team" : "1st Team";
@@ -544,7 +547,7 @@ function loadTable(sheet, element){
   });
 }
 
-// ✅ KNOCKOUT LOADER (FIXED)
+// ✅ KNOCKOUT LOADER
 function loadKnockout(sheet, element){
 
   const url = `https://docs.google.com/spreadsheets/d/${MAIN_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
@@ -560,7 +563,8 @@ function loadKnockout(sheet, element){
     let currentStage = "";
 
     rows.forEach(r => {
-      if(!r.c) return;
+
+      if(isEmptyRow(r)) return;
 
       const stage = r.c[0]?.v || "";
       const home = r.c[1]?.v || "";
