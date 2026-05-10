@@ -456,7 +456,7 @@ function isEmptyRow(r){
 
   function isUnlocked(dateStr){
   let d = new Date(dateStr);
-  d.setHours(0,0,0,0);
+  d.setHours(15,0,0,0);
   return new Date() >= d;
 }
   
@@ -468,7 +468,7 @@ function loadMatchSheet(sheetName, home, away){
   modal.innerHTML = `
     <div class="modal-content">
       <h2>Match Sheet Locked</h2>
-      <p>Team sheets become available at 16:00 on match day.</p>
+      <p>Team sheets become available at 15:00 on match day.</p>
       <button onclick="closeModal()">Close</button>
     </div>
   `;
