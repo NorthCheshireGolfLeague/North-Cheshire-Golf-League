@@ -453,9 +453,29 @@ function isEmptyRow(r){
 }
 
 // ✅ MATCH SHEET LOADER
+
+  function isUnlocked(dateStr){
+  let d = new Date(dateStr);
+  d.setHours(15,0,0,0);
+  return new Date() >= d;
+}
+  
 function loadMatchSheet(sheetName, home, away){
 
   const modal = document.getElementById("matchSheetModal");
+
+  if(!isUnlocked(sheetName)){
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h2>Match Sheet Locked</h2>
+      <p>Team sheets become available at 16:00 on match day.</p>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  `;
+
+  modal.style.display = "flex";
+  return;
+}
 
   const url = `https://docs.google.com/spreadsheets/d/${MATCH_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
 
