@@ -466,7 +466,7 @@ function isEmptyRow(r){
 
   function isUnlocked(dateStr){
   let d = new Date(dateStr);
-  d.setHours(15,0,0,0);
+  d.setHours(0,0,0,0);
   return new Date() >= d;
 }
   
