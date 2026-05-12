@@ -470,11 +470,11 @@ function isEmptyRow(r){
   return new Date() >= d;
 }
   
-function loadMatchSheet(sheetName, home, away){
+function loadMatchSheet(sheetName, home, away, matchDate){
 
   const modal = document.getElementById("matchSheetModal");
 
-  if(!isUnlocked(sheetName)){
+  if(!isUnlocked(sheetDate)){
   modal.innerHTML = `
     <div class="modal-content">
       <h2>Team Sheet Locked</h2>
@@ -717,7 +717,7 @@ rows.forEach(r => {
         const away = r.c[4]?.v || "";
 
         html += `<td>
-          <button class="view-btn" onclick="loadMatchSheet('Match ${matchNumber} ${teamType}', '${home}', '${away}')">
+          <button class="view-btn" onclick="loadMatchSheet('Match ${matchNumber} ${teamType}', '${home}', '${away}', '${date}')">
             View Team Sheet
           </button>
         </td>`;
