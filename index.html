@@ -474,7 +474,7 @@ function loadMatchSheet(sheetName, home, away, matchDate){
 
   const modal = document.getElementById("matchSheetModal");
 
-  if(!isUnlocked(sheetDate)){
+  if(!isUnlocked(matchDate)){
   modal.innerHTML = `
     <div class="modal-content">
       <h2>Team Sheet Locked</h2>
