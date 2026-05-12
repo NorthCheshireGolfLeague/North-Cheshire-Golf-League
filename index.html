@@ -715,6 +715,7 @@ rows.forEach(r => {
 
         const home = r.c[1]?.v || "";
         const away = r.c[4]?.v || "";
+        const date = r.c[5]?.v || "";
 
         html += `<td>
           <button class="view-btn" onclick="loadMatchSheet('Match ${matchNumber} ${teamType}', '${home}', '${away}', '${date}')">
