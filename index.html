@@ -464,10 +464,8 @@ function isEmptyRow(r){
 
 // ✅ MATCH SHEET LOADER
 
-  function isUnlocked(dateStr){
-  let d = new Date(dateStr);
-  d.setHours(04,0,0,0);
-  return new Date() >= d;
+function isUnlocked(dateStr){
+  return true;
 }
   
 function loadMatchSheet(sheetName, home, away, matchDate){
