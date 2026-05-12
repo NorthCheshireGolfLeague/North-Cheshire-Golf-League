@@ -465,7 +465,18 @@ function isEmptyRow(r){
 // ✅ MATCH SHEET LOADER
 
 function isUnlocked(dateStr){
-  return true;
+
+  const parts = dateStr.split("/");
+
+  const day = parseInt(parts[0]);
+  const month = parseInt(parts[1]) - 1;
+  const year = 2000 + parseInt(parts[2]);
+
+  let d = new Date(year, month, day);
+
+  d.setHours(6,0,0,0);
+
+  return new Date() >= d;
 }
   
 function loadMatchSheet(sheetName, home, away, matchDate){
