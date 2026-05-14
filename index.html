@@ -464,7 +464,7 @@ function isEmptyRow(r){
 
 // ✅ MATCH SHEET LOADER
 
-function isUnlocked(dateStr){
+function getMatchStatus(dateStr){
 
   const parts = dateStr.split("/");
 
@@ -472,18 +472,35 @@ function isUnlocked(dateStr){
   const month = parseInt(parts[1]) - 1;
   const year = 2000 + parseInt(parts[2]);
 
-  let d = new Date(year, month, day);
+  const now = new Date();
 
-  d.setHours(11,0,0,0);
+  // Unlock time
+  let unlock = new Date(year, month, day);
+  unlock.setHours(16,0,0,0);
 
-  return new Date() >= d;
+  // Expiry time
+  let expiry = new Date(year, month, day);
+  expiry.setHours(23,59,59,999);
+
+  if(now < unlock){
+    return "locked";
+  }
+
+  if(now > expiry){
+    return "expired";
+  }
+
+  return "open";
 }
   
 function loadMatchSheet(sheetName, home, away, matchDate){
 
   const modal = document.getElementById("matchSheetModal");
 
-  if(!isUnlocked(matchDate)){
+  const status = getMatchStatus(matchDate);
+
+if(status === "locked"){
+  
   modal.innerHTML = `
     <div class="modal-content">
       <h2>Team Sheet Locked</h2>
@@ -496,6 +513,20 @@ function loadMatchSheet(sheetName, home, away, matchDate){
   return;
 }
 
+if(status === "expired"){
+
+modal.innerHTML = `
+  <div class="modal-content">
+    <h2>Fixture Completed</h2>
+    <p>This fixture has ended.</p>
+    <button onclick="closeModal()">Close</button>
+  </div>
+`;
+
+modal.style.display = "flex";
+return;
+}
+  
   const url = `https://docs.google.com/spreadsheets/d/${MATCH_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
 
   fetch(url)
