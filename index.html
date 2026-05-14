@@ -476,7 +476,7 @@ function getMatchStatus(dateStr){
 
   // Unlock time
   let unlock = new Date(year, month, day);
-  unlock.setHours(16,0,0,0);
+  unlock.setHours(14,0,0,0);
 
   // Expiry time
   let expiry = new Date(year, month, day);
@@ -504,7 +504,7 @@ if(status === "locked"){
   modal.innerHTML = `
     <div class="modal-content">
       <h2>Team Sheet Locked</h2>
-      <p>Team sheets become available at 15:00 on match day.</p>
+      <p>Team sheets become available at 14:00 on match day.</p>
       <button onclick="closeModal()">Close</button>
     </div>
   `;
