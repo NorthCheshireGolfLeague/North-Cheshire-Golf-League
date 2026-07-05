@@ -799,21 +799,49 @@ function loadKnockout(sheet, element){
       const date = r.c[5]?.v || "";
       const venue = r.c[6]?.v || "";
 
+      let sheetName = "";
+
+const firstTeam = sheet.includes("1st");
+
+if(stage === "Quarter Final A"){
+  sheetName = firstTeam ? "QF A 1st Team" : "QF A 2nd Team";
+}
+else if(stage === "Quarter Final B"){
+  sheetName = firstTeam ? "QF B 1st Team" : "QF B 2nd Team";
+}
+else if(stage === "Semi Final 1"){
+  sheetName = firstTeam ? "SF 1 1st Team" : "SF 1 2nd Team";
+}
+else if(stage === "Semi Final 2"){
+  sheetName = firstTeam ? "SF 2 1st Team" : "SF 2 2nd Team";
+}
+else if(stage === "Final"){
+  sheetName = firstTeam ? "F 1st Team" : "F 2nd Team";
+}
+
       if(stage !== currentStage){
         html += `<div class="stage">${stage}</div>`;
         currentStage = stage;
       }
 
-      html += `
-        <div class="match">
-          <div class="teams">
-            <span>${home}</span>
-            <span>${away}</span>
-          </div>
-          <div class="score">${hs} - ${as}</div>
-          <div class="details">${date} | ${venue}</div>
-        </div>
-      `;
+html += `
+  <div class="match">
+    <div class="teams">
+      <span>${home}</span>
+      <span>${away}</span>
+    </div>
+
+    <div class="score">${hs} - ${as}</div>
+
+    <div class="details">${date} | ${venue}</div>
+
+    <button class="view-btn"
+      onclick="loadMatchSheet('${sheetName}','${home}','${away}','${date}')">
+      View Team Sheet
+    </button>
+
+  </div>
+`;
     });
 
     document.getElementById(element).innerHTML = html;
