@@ -803,7 +803,7 @@ function loadKnockout(sheet, element){
 
 const firstTeam = sheet.includes("1st");
 
-if(stage === "Quarter Final A"){
+else if(stage === "Quarter Final A"){
  sheetName = firstTeam ? "Copy of QF A 1st Team" : "QF A 2nd Team";
 }
 else if(stage === "Quarter Final B"){
