@@ -580,7 +580,7 @@ function closeModal(){
 
   const modal = document.getElementById("matchSheetModal");
 
-  const status = "open";
+  const status = getMatchStatus(matchDate);
 
   if(status === "locked"){
 
