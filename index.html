@@ -576,6 +576,91 @@ function closeModal(){
   document.getElementById("matchSheetModal").style.display="none";
 }
 
+  function loadTeeOrder(matchDate){
+
+  const modal = document.getElementById("matchSheetModal");
+
+  const status = getMatchStatus(matchDate);
+
+  if(status === "locked"){
+
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h2>Tee Order Locked</h2>
+        <p>Tee Order becomes available at 14:00 on match day.</p>
+        <button onclick="closeModal()">Close</button>
+      </div>
+    `;
+
+    modal.style.display = "flex";
+    return;
+  }
+
+  if(status === "expired"){
+
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h2>Fixture Completed</h2>
+        <p>This fixture has ended.</p>
+        <button onclick="closeModal()">Close</button>
+      </div>
+    `;
+
+    modal.style.display = "flex";
+    return;
+  }
+
+  const url = `https://docs.google.com/spreadsheets/d/${MATCH_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Final%20Tee%20Order`;
+
+  fetch(url)
+  .then(res => res.text())
+  .then(data => {
+
+    const json = JSON.parse(data.substr(47).slice(0,-2));
+    const rows = json.table.rows;
+    const cols = json.table.cols;
+
+    let html = `<div class="modal-content">
+                  <h2>Final Tee Order</h2>
+                  <table class="match-table">`;
+
+    html += "<tr>";
+
+    cols.slice(0,5).forEach(c=>{
+      html += `<th>${c.label}</th>`;
+    });
+
+    html += "</tr>";
+
+    rows.forEach(r=>{
+
+      if(isEmptyRow(r)) return;
+
+      html += "<tr>";
+
+      r.c.slice(0,5).forEach(c=>{
+
+        let value = c && (c.f || c.v) ? (c.f || c.v) : "";
+
+        html += `<td>${value}</td>`;
+
+      });
+
+      html += "</tr>";
+
+    });
+
+    html += `</table>
+              <button onclick="closeModal()">Close</button>
+            </div>`;
+
+    modal.innerHTML = html;
+    modal.style.display = "flex";
+
+  });
+
+}
+
 // ✅ LOAD TABLES
 function loadTable(sheet, element){
 
@@ -840,6 +925,17 @@ html += `
       View Team Sheet
     </button>
 
+    ${
+      stage === "Final"
+      ? `
+      <button class="view-btn"
+        onclick="loadTeeOrder('${date}')">
+        ⛳ Tee Order
+      </button>
+      `
+      : ""
+    }
+    
   </div>
 `;
     });
